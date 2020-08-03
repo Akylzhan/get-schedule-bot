@@ -61,6 +61,11 @@ def getCourseName(update, context):
 
 def main():
   updater = Updater(token, use_context=True)
+  PORT = int(os.environ.get('PORT', '8443'))
+  updater.start_webhook(listen="0.0.0.0",
+                      port=PORT,
+                      url_path=token)
+  updater.bot.set_webhook("https://schedule-bot-akylzhan.herokuapp.com/" + token)
 
   # Get the dispatcher to register handlers
   dp = updater.dispatcher
