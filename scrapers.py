@@ -1,18 +1,14 @@
 import os
 import requests as req
 
-def getSearchData(data):
-  try:
-    sh = "sh getSearchData.sh {}".format(data)
-    courseData = os.popen(sh).read()
-    courseData = eval(courseData)
-    courseData = courseData['data']
-    if len(courseData) > 0:
-      return courseData
-    return -1
-  except:
-    return -1
-
+def getSearchData(data, info):
+  result = []
+  for i in data:
+    if info in (i["ABBR"] + i["TITLE"]).lower():
+      result.append(i)
+  if len(result) > 0:
+    return result
+  return -1
 
 def getSchedule(courseId, termId):
   r = req.Session()

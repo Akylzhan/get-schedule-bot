@@ -8,6 +8,8 @@ token = "949738996:AAHVrnVCsv4LUP0y-0FNPS_dCs2lCVhcQ08"
 # TODO: add department ids
 term_id = 521
 
+data = eval(open("data.json", "r").read())['data']
+
 
 import logging
 
@@ -23,14 +25,15 @@ def start(update, context):
   update.message.reply_text('Hello! Send me course name (eg. CSCI 152 or public speaking) and I will send you schedule of this course')
 
 def getCourseName(update, context):
-  data = update.message.text.lower()
-  data = '+'.join(data.split(' '))
-  data = scrapers.getSearchData(data)
-  if data == -1:
+  print(update.message.text)
+  courseInfo = update.message.text.lower()
+  courseInfo = scrapers.getSearchData(data, courseInfo)
+
+  if courseInfo == -1:
     update.message.reply_text("An error occured, consider changing search text")
     return
 
-  for i in data:
+  for i in courseInfo:
     message = ""
     message += "Abbr: "    + i["ABBR"] + "\n"
     message += "Title: "   + i["TITLE"] + "\n"
