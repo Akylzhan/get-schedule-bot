@@ -72,7 +72,7 @@ def main():
 
   updater.start_polling()
 
-  # updater.idle()
+  updater.idle()
 
 
 if __name__ == '__main__':
