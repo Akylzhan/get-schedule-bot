@@ -25,7 +25,8 @@ def getSchedule(courseId, termId):
   url = "https://registrar.nu.edu.kz/my-registrar/public-course-catalog/json?method=getSchedule&courseId={}&termId={}"
   try:
     courseSchedule = r.post(url.format(courseId, termId), headers=headers).text
-    courseSchedule = eval(courseSchedule.replace('false', 'False'))
-    return courseSchedule
+    if len(courseSchedule) > 2:
+      courseSchedule = eval(courseSchedule.replace('false', 'False'))
+      return courseSchedule
   except:
     return -1
