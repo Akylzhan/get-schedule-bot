@@ -4,6 +4,8 @@ import requests as req
 import scrapers
 
 token = "949738996:AAHVrnVCsv4LUP0y-0FNPS_dCs2lCVhcQ08"
+PORT = int(os.environ.get('PORT', '5000'))
+
 # TODO: add other term_ids
 # TODO: add department ids
 term_id = 521
@@ -61,11 +63,6 @@ def getCourseName(update, context):
 
 def main():
   updater = Updater(token, use_context=True)
-  PORT = int(os.environ.get('PORT', '8443'))
-  updater.start_webhook(listen="0.0.0.0",
-                      port=PORT,
-                      url_path=token)
-  updater.bot.set_webhook("https://schedule-bot-akylzhan.herokuapp.com/" + token)
 
   # Get the dispatcher to register handlers
   dp = updater.dispatcher
@@ -76,6 +73,11 @@ def main():
   dp.add_handler(MessageHandler(Filters.text & ~Filters.command, getCourseName))
 
   updater.start_polling()
+
+  updater.start_webhook(listen="0.0.0.0",
+                      port=PORT,
+                      url_path=token)
+  updater.bot.set_webhook("https://schedule-bot-akylzhan.herokuapp.com/" + token)
 
   updater.idle()
 
