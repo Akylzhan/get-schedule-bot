@@ -3,7 +3,7 @@ import requests as req
 
 import scrapers
 
-token = "949738996:AAHVrnVCsv4LUP0y-0FNPS_dCs2lCVhcQ08"
+TOKEN = "949738996:AAHVrnVCsv4LUP0y-0FNPS_dCs2lCVhcQ08"
 
 # TODO: add other term_ids
 # TODO: add department ids
@@ -82,7 +82,11 @@ def main():
     dp.add_handler(MessageHandler(Filters.text & ~Filters.command, getCourseName))
     dp.add_error_handler(error)
 
-    updater.start_polling()
+    PORT = int(os.environ.get('PORT', '8443'))
+    updater.start_webhook(listen="0.0.0.0",
+                          port=PORT,
+                          url_path=TOKEN)
+    updater.bot.set_webhook("https://<appname>.herokuapp.com/" + TOKEN)
 
     updater.idle()
   except:
