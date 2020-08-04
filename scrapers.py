@@ -1,10 +1,11 @@
 import os
 import requests as req
 
-def getSearchData(info):
-  sh = "sh getSearchData.sh " + info
-  result = os.popen(sh).read()
-  result = eval(result)['data']
+def getSearchData(data, info):
+  result = []
+  for i in data:
+    if info.lower() in (i['ABBR'] + " " + i['TITLE']).lower():
+      result.append(i)
   if len(result) > 0:
     return result
   return -1
