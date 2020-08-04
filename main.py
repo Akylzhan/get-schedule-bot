@@ -31,18 +31,20 @@ def start(update, context):
     print("ERROR in START")
 
 def getCourseName(update, context):
-  print(update.message.text)
+  # print(update.message.text)
   try:
+
     query = update.message.text.lower()
     if len(query) < 3:
       update.message.reply_text("your query is smol")
       return
+
     courseList = scrapers.getSearchData(data, query)
 
     if courseList == -1:
       update.message.reply_text("Такого курса нет, либо я ошибка природы :(")
       return
-
+      
     for i in courseList:
       message = ""
       message += "Abbr: "    + i["ABBR"] + "\n"
@@ -52,7 +54,7 @@ def getCourseName(update, context):
       message += "Coreqs: " + i["COREQ"] + "\n"
       message += "Antireqs: " + i["ANTIREQ"] + "\n"
       message += "Description: " + i["SHORTDESC"] + "\n"
-      
+
       schedule = scrapers.getSchedule(i['COURSEID'], term_id)
       if schedule == -1:
         update.message.reply_text("Такого курса нет, либо я ошибка природы :(")
@@ -81,7 +83,7 @@ def main():
 
   dp.add_handler(MessageHandler(Filters.text & ~Filters.command, getCourseName))
   dp.add_error_handler(error)
-  
+
   if DEBUG:
     updater.start_polling()
   else:
@@ -90,7 +92,7 @@ def main():
                         port=PORT,
                         url_path=TOKEN)
     updater.bot.set_webhook("https://schedule-bot-akylzhan.herokuapp.com/" + TOKEN)
-  
+
   updater.idle()
 
 
