@@ -1,1 +1,1 @@
-worker: python3 checkSH.py
+web: python3 checkSH.py
