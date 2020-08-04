@@ -1,17 +1,18 @@
 import os
 import requests as req
+import logging
+
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
 import scrapers
 
-TOKEN = "949738996:AAHVrnVCsv4LUP0y-0FNPS_dCs2lCVhcQ08"
+# TOKEN = "949738996:AAHVrnVCsv4LUP0y-0FNPS_dCs2lCVhcQ08"
+TOKEN = "1201714568:AAHLzZRyHaW3jGXawZJP2-VD8Wr_tMJXa2E"
 
 # TODO: add other term_ids
 # TODO: add department ids
 term_id = 521
-
-import logging
-
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+data = eval(open("data.json").read())['data']
 
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -32,14 +33,14 @@ def getCourseName(update, context):
     if len(courseInfo) < 3:
       update.message.reply_text("your query is smol")
       return
-    courseInfo = '+'.join(courseInfo.split(' '))
-    courseInfo = scrapers.getSearchData(courseInfo)
+    # courseInfo = '+'.join(courseInfo.split(' '))
+    courseList = scrapers.getSearchData(data, courseInfo)
 
-    if courseInfo == -1:
+    if courseList == -1:
       update.message.reply_text("Такого курса нет, либо я ошибка природы :(")
       return
 
-    for i in courseInfo:
+    for i in courseList:
       message = ""
       message += "Abbr: "    + i["ABBR"] + "\n"
       message += "Title: "   + i["TITLE"] + "\n"
@@ -70,8 +71,8 @@ def error():
   print("SOME ERROR")
 
 def main():
-  try:
-    updater = Updater(token, use_context=True)
+  # try:
+    updater = Updater(TOKEN, use_context=True)
 
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
@@ -82,15 +83,16 @@ def main():
     dp.add_handler(MessageHandler(Filters.text & ~Filters.command, getCourseName))
     dp.add_error_handler(error)
 
-    PORT = int(os.environ.get('PORT', '8443'))
-    updater.start_webhook(listen="0.0.0.0",
-                          port=PORT,
-                          url_path=TOKEN)
-    updater.bot.set_webhook("https://<appname>.herokuapp.com/" + TOKEN)
-
+    # PORT = int(os.environ.get('PORT', '8443'))
+    updater.start_polling()
+    # # add handlers
+    # updater.start_webhook(listen="0.0.0.0",
+    #                       port=PORT,
+    #                       url_path=TOKEN)
+    # updater.bot.set_webhook("https://schedule-bot-akylzhan.herokuapp.com/" + TOKEN)
     updater.idle()
-  except:
-    print("ERROR in MAIN")
+  # except:
+    
 
 
 if __name__ == '__main__':
