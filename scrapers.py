@@ -1,10 +1,10 @@
 import os
 import requests as req
 
-def getSearchData(data, info):
+def getSearchData(data, query):
   result = []
   for i in data:
-    if info.lower() in (i['ABBR'] + " " + i['TITLE']).lower():
+    if query.lower() in (i['ABBR'] + " " + i['TITLE']).lower():
       result.append(i)
   if len(result) > 0:
     return result

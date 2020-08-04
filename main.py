@@ -6,8 +6,12 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
 import scrapers
 
-# TOKEN = "949738996:AAHVrnVCsv4LUP0y-0FNPS_dCs2lCVhcQ08"
-TOKEN = "1201714568:AAHLzZRyHaW3jGXawZJP2-VD8Wr_tMJXa2E"
+DEBUG = os.environ.get('PROD') is None
+TOKEN = "949738996:AAHVrnVCsv4LUP0y-0FNPS_dCs2lCVhcQ08"
+
+if DEBUG:
+  TOKEN = "1201714568:AAHLzZRyHaW3jGXawZJP2-VD8Wr_tMJXa2E"
+
 
 # TODO: add other term_ids
 # TODO: add department ids
@@ -29,12 +33,11 @@ def start(update, context):
 def getCourseName(update, context):
   print(update.message.text)
   try:
-    courseInfo = update.message.text.lower()
-    if len(courseInfo) < 3:
+    query = update.message.text.lower()
+    if len(query) < 3:
       update.message.reply_text("your query is smol")
       return
-    # courseInfo = '+'.join(courseInfo.split(' '))
-    courseList = scrapers.getSearchData(data, courseInfo)
+    courseList = scrapers.getSearchData(data, query)
 
     if courseList == -1:
       update.message.reply_text("Такого курса нет, либо я ошибка природы :(")
@@ -65,33 +68,30 @@ def getCourseName(update, context):
         message += cell
       update.message.reply_text(message)
   except:
-    print("ERROR")
+    print("ERROR in getCourseName")
 
 def error():
-  print("SOME ERROR")
+  print("OTHER ERROR")
 
 def main():
-  # try:
-    updater = Updater(TOKEN, use_context=True)
+  updater = Updater(TOKEN, use_context=True)
+  dp = updater.dispatcher
 
-    # Get the dispatcher to register handlers
-    dp = updater.dispatcher
+  dp.add_handler(CommandHandler("start", start))
 
-    # on different commands - answer in Telegram
-    dp.add_handler(CommandHandler("start", start))
-
-    dp.add_handler(MessageHandler(Filters.text & ~Filters.command, getCourseName))
-    dp.add_error_handler(error)
-
+  dp.add_handler(MessageHandler(Filters.text & ~Filters.command, getCourseName))
+  dp.add_error_handler(error)
+  
+  if DEBUG:
+    updater.start_polling()
+  else:
     PORT = int(os.environ.get('PORT', '8443'))
-    # updater.start_polling()
     updater.start_webhook(listen="0.0.0.0",
-                          port=PORT,
-                          url_path=TOKEN)
+                        port=PORT,
+                        url_path=TOKEN)
     updater.bot.set_webhook("https://schedule-bot-akylzhan.herokuapp.com/" + TOKEN)
-    updater.idle()
-  # except:
-    
+  
+  updater.idle()
 
 
 if __name__ == '__main__':
