@@ -1,4 +1,5 @@
 #!/bin/bash
+data=$1
 curl -sL 'https://registrar.nu.edu.kz/my-registrar/public-course-catalog/json' \
 -X 'POST' \
 -H 'Content-Type: application/x-www-form-urlencoded' \
@@ -12,5 +13,5 @@ curl -sL 'https://registrar.nu.edu.kz/my-registrar/public-course-catalog/json' \
 -H 'Referer: https://registrar.nu.edu.kz/course-catalog' \
 -H 'Cookie: _ga=GA1.3.715067609.1593191964; _gid=GA1.3.1028721498.1596383249; has_js=1; AUTHSSL=1; SSESS4985c7dbe54e755248659c29e4b83d20=9Ax14hRcBz1rfLX-oVxRTLsfjvO5TPiOQd2ExrWTxpI; _fbp=fb.2.1596398202999.123217043; _ym_isad=1; _ym_d=1596398202; _ym_uid=1593583841192740854' \
 -H 'X-Requested-With: XMLHttpRequest' \
---data 'method=getSearchData&searchParams%5BformSimple%5D=false&searchParams%5Blimit%5D=700&searchParams%5Bpage%5D=1&searchParams%5Bstart%5D=0&searchParams%5BquickSearch%5D=&searchParams%5BsortField%5D=-1&searchParams%5BsortDescending%5D=-1&searchParams%5Bsemester%5D=521&searchParams%5Bschools%5D=&searchParams%5Bdepartments%5D=&searchParams%5Blevels%5D=&searchParams%5Bsubjects%5D=&searchParams%5Binstructors%5D=&searchParams%5Bbreadths%5D=&searchParams%5BabbrNum%5D=&searchParams%5Bcredit%5D=' \
-| gunzip -c > a.json
+--data 'method=getSearchData&searchParams%5BformSimple%5D=false&searchParams%5Blimit%5D=700&searchParams%5Bpage%5D=1&searchParams%5Bstart%5D=0&searchParams%5BquickSearch%5D='$data'&searchParams%5BsortField%5D=-1&searchParams%5BsortDescending%5D=-1&searchParams%5Bsemester%5D=521&searchParams%5Bschools%5D=&searchParams%5Bdepartments%5D=&searchParams%5Blevels%5D=&searchParams%5Bsubjects%5D=&searchParams%5Binstructors%5D=&searchParams%5Bbreadths%5D=&searchParams%5BabbrNum%5D=&searchParams%5Bcredit%5D=' \
+| gunzip -c
