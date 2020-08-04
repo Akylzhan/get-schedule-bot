@@ -46,14 +46,17 @@ def getCourseName(update, context):
       return
 
     for i in courseList:
+      # TODO: format data.json to remove:
+      #   consecutive whitespaces (" ".join(str.split()))
+      #   remove trailing ' ' and '\n' str.strip()
       message = ""
-      message += "Abbr: "    + i["ABBR"] + "\n"
-      message += "Title: "   + i["TITLE"] + "\n"
-      message += "ECTS: "    + i["CRECTS"] + "\n"
-      message += "Prereqs: " + i["PREREQ"] + "\n"
-      message += "Coreqs: " + i["COREQ"] + "\n"
-      message += "Antireqs: " + i["ANTIREQ"] + "\n"
-      message += "Description: " + i["SHORTDESC"] + "\n"
+      message += "Abbr: "    + i["ABBR"].strip() + "\n"
+      message += "Title: "   + i["TITLE"].strip() + "\n"
+      message += "ECTS: "    + i["CRECTS"].strip() + "\n"
+      message += "Prereqs: " + i["PREREQ"].strip() + "\n"
+      message += "Coreqs: " + i["COREQ"].strip() + "\n"
+      message += "Antireqs: " + i["ANTIREQ"].strip() + "\n"
+      message += "Description: " + i["SHORTDESC"].strip() + "\n"
       
       schedule = scrapers.getSchedule(i['COURSEID'], term_id)
       if schedule == -1:
@@ -61,12 +64,12 @@ def getCourseName(update, context):
         return
       for j in schedule:
         cell = "\n"
-        cell += "Type: "     + j['ST'] + "\n"
-        cell += "Days: "     + j['DAYS'] + "\n"
-        cell += "Times: "    + j['TIMES'].replace('R', "R(Thursday)") + "\n"
-        cell += "Profs: "    + j['FACULTY'] + "\n"
+        cell += "Type: "     + j['ST'].strip() + "\n"
+        cell += "Days: "     + j['DAYS'].replace('R', "R(Thursday)") + "\n"
+        cell += "Times: "    + j['TIMES'].strip() + "\n"
+        cell += "Profs: "    + j['FACULTY'].replace('<br>', ',') + "\n"
         cell += "Enrolled: " + str(j['ENR']) + "/" + str(j['CAPACITY']) + "\n"
-        cell += "Room: "     + j['ROOM'] + "\n"
+        cell += "Room: "     + j['ROOM'].strip() + "\n"
         message += cell
       update.message.reply_text(message)
   except:
