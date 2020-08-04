@@ -1,10 +1,12 @@
 import os
 import requests as req
 import logging
+import random
 
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
 import scrapers
+import messages
 
 
 DEBUG = os.environ.get('PROD') is None
@@ -35,12 +37,12 @@ def getCourseName(update, context):
   try:
     query = update.message.text.lower()
     if len(query) < 3:
-      update.message.reply_text("your query is smol")
+      update.message.reply_text(random.choice(messages.smallQueryMsg))
       return
     courseList = scrapers.getSearchData(data, query)
 
     if courseList == -1:
-      update.message.reply_text("Такого курса нет, либо я ошибка природы :(")
+      update.message.reply_text(random.choice(messages.emptyCourseListMsg))
       return
 
     for i in courseList:
@@ -55,7 +57,7 @@ def getCourseName(update, context):
       
       schedule = scrapers.getSchedule(i['COURSEID'], term_id)
       if schedule == -1:
-        update.message.reply_text("Такого курса нет, либо я ошибка природы :(")
+        update.message.reply_text(random.choice(messages.emptyCourseListMsg))
         return
       for j in schedule:
         cell = "\n"
