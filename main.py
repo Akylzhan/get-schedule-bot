@@ -33,8 +33,8 @@ def start(update, context):
     print("ERROR in START")
 
 def getCourseName(update, context):
-  print(update.message.text)
-  try:
+  # print(update.message.text)
+  # try:
     query = update.message.text.lower()
     if len(query) < 3:
       update.message.reply_text("your query is smol")
@@ -47,13 +47,13 @@ def getCourseName(update, context):
 
     for i in courseList:
       message = ""
-      message += "Abbr: "    + i["ABBR"] + "\n"
+      message += "Abbr: *"    + i["ABBR"] + "*\n"
       message += "Title: "   + i["TITLE"] + "\n"
       message += "ECTS: "    + i["CRECTS"] + "\n"
       message += "Prereqs: " + i["PREREQ"] + "\n"
       message += "Coreqs: " + i["COREQ"] + "\n"
       message += "Antireqs: " + i["ANTIREQ"] + "\n"
-      message += "Description: " + i["SHORTDESC"] + "\n"
+      message += "Description: " + i["SHORTDESC"].strip() + "\n"
       
       schedule = scrapers.getSchedule(i['COURSEID'], term_id)
       if schedule == -1:
@@ -65,14 +65,24 @@ def getCourseName(update, context):
         cell += "Days: "     + j['DAYS'] + "\n"
         cell += "Times: "    + j['TIMES'].replace('R', "R(Thursday)") + "\n"
         cell += "Profs: *"    + j['FACULTY'].replace('<br>', ',') + "*\n"
-        cell += "Enrolled: *" + str(j['ENR']) + "/" + str(j['CAPACITY']) + "*\n"
-        cell += "Room: "     + j['ROOM'] + "\n"
+        
+        percentage = 0
+        if int(j['CAPACITY']) > 0:
+          percentage = int(j['ENR']) / int(j['CAPACITY'])
+        enr_emoji = "🟢"
+        if percentage >= 0.50:
+          enr_emoji = "🟠"
+        if percentage >= 0.99:
+          enr_emoji = "🔴"
+        cell += f"Enrolled: {enr_emoji}*{str(j['ENR'])}/{str(j['CAPACITY'])}*\n"
+        
+        cell += "Room: " + j['ROOM'] + "\n"
         message += cell
       for c in replace_md:
         message = message.replace(c, "\\" + c)
       update.message.reply_text(message, parse_mode=ParseMode.MARKDOWN_V2)
-  except:
-    print("ERROR in getCourseName")
+  # except:
+    # print("ERROR in getCourseName")
 
 def error():
   print("OTHER ERROR")
