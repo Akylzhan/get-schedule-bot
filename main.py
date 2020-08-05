@@ -38,7 +38,7 @@ def start(update, context):
     print("ERROR in START")
 
 def getCourseName(update, context):
-  # print(update.message.text)
+  print(update.message.text)
   try:
 
     query = update.message.text.lower()
