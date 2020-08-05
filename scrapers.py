@@ -10,6 +10,7 @@ def getSearchData(data, query):
       for x in words:
         if x.lower() in (i['ABBR']).lower():
           occurs[i['ABBR']][0] += 1
+          continue
         if x.lower() in (i['TITLE']).lower():
           occurs[i['ABBR']][0] += 1
       if(occurs[i['ABBR']][0] < len(words)):
