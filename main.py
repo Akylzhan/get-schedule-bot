@@ -1,10 +1,12 @@
 import os
 import requests as req
 import logging
+import random
 
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
-
+from telegram import ParseMode
 import scrapers
+import messages
 
 
 DEBUG = os.environ.get('PROD') is None
@@ -17,6 +19,11 @@ if DEBUG:
 # TODO: add department ids
 term_id = 521
 data = eval(open("data.json").read())['data']
+for course in data:
+  for key in course:
+    course[key] = " ".join(course[key].strip().split())
+
+replace_md = ['`', '(', ')', '+', '-', '.', '!']
 
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -36,37 +43,52 @@ def getCourseName(update, context):
 
     query = update.message.text.lower()
     if len(query) < 3:
-      update.message.reply_text("your query is smol")
+      update.message.reply_text(random.choice(messages.smallQueryMsg))
       return
 
     courseList = scrapers.getSearchData(data, query)
 
     if courseList == -1:
-      update.message.reply_text("Такого курса нет, либо я ошибка природы :(")
+      update.message.reply_text(random.choice(messages.emptyCourseListMsg))
       return
     for i in courseList:
-        message = ""
-        message += "Abbr: "    + i["ABBR"] + "\n"
-        message += "Title: "   + i["TITLE"] + "\n"
-        message += "ECTS: "    + i["CRECTS"] + "\n"
-        message += "Prereqs: " + i["PREREQ"] + "\n"
-        message += "Coreqs: " + i["COREQ"] + "\n"
-        message += "Antireqs: " + i["ANTIREQ"] + "\n"
-        message += "Description: " + i["SHORTDESC"] + "\n"
-        schedule = scrapers.getSchedule(i['COURSEID'], term_id)
-        if schedule == -1:
-            update.message.reply_text("Такого курса нет, либо я ошибка природы :(")
-            return
-        for j in schedule:
-            cell = "\n"
-            cell += "Type: "     + j['ST'] + "\n"
-            cell += "Days: "     + j['DAYS'] + "\n"
-            cell += "Times: "    + j['TIMES'].replace('R', "R(Thursday)") + "\n"
-            cell += "Profs: "    + j['FACULTY'] + "\n"
-            cell += "Enrolled: " + str(j['ENR']) + "/" + str(j['CAPACITY']) + "\n"
-            cell += "Room: "     + j['ROOM'] + "\n"
-            message += cell
-        update.message.reply_text(message)
+      message = ""
+      message += "Abbr: *"    + i["ABBR"] + "*\n"
+      message += "Title: "   + i["TITLE"] + "\n"
+      message += "ECTS: "    + i["CRECTS"] + "\n"
+      message += "Prereqs: " + i["PREREQ"] + "\n"
+      message += "Coreqs: " + i["COREQ"] + "\n"
+      message += "Antireqs: " + i["ANTIREQ"] + "\n"
+      message += "Description: " + i["SHORTDESC"] + "\n"
+
+      schedule = scrapers.getSchedule(i['COURSEID'], term_id)
+      if schedule == -1:
+        update.message.reply_text(random.choice(messages.emptyCourseListMsg))
+        return
+      for j in schedule:
+        cell = "\n"
+        cell += "Type: *"     + j['ST'] + "*\n"
+        cell += "Days: "     + j['DAYS'].replace('R', "R(Thursday)") + "\n"
+        cell += "Times: "    + j['TIMES'] + "\n"
+        cell += "Profs: *"    + j['FACULTY'].replace('<br>', ',') + "*\n"
+        
+        percentage = 0
+        if int(j['CAPACITY']) > 0:
+          percentage = int(j['ENR']) / int(j['CAPACITY'])
+        enr_emoji = "🟢"
+        if percentage >= 0.49:
+          enr_emoji = "🟡"
+        if percentage >= 0.76:
+          enr_emoji = "🟠"
+        if percentage >= 0.99:
+          enr_emoji = "🔴"
+        cell += f"Enrolled: {enr_emoji}*{str(j['ENR'])}/{str(j['CAPACITY'])}*\n"
+        
+        cell += "Room: " + j['ROOM'] + "\n"
+        message += cell
+      for c in replace_md:
+        message = message.replace(c, "\\" + c)
+      update.message.reply_text(message, parse_mode=ParseMode.MARKDOWN_V2)
   except:
     print("ERROR in getCourseName")
 
