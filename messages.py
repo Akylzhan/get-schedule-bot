@@ -1,3 +1,5 @@
+startMsg = "Hello! Send me course name (eg. CSCI 152 or public speaking) and I will send you schedule of this course"
+
 smallQueryMsg = [
   "your query is smol",
   "your query is smol like your pp",
