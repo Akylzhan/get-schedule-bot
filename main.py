@@ -44,31 +44,29 @@ def getCourseName(update, context):
     if courseList == -1:
       update.message.reply_text("Такого курса нет, либо я ошибка природы :(")
       return
-      
     for i in courseList:
-      message = ""
-      message += "Abbr: "    + i["ABBR"] + "\n"
-      message += "Title: "   + i["TITLE"] + "\n"
-      message += "ECTS: "    + i["CRECTS"] + "\n"
-      message += "Prereqs: " + i["PREREQ"] + "\n"
-      message += "Coreqs: " + i["COREQ"] + "\n"
-      message += "Antireqs: " + i["ANTIREQ"] + "\n"
-      message += "Description: " + i["SHORTDESC"] + "\n"
-
-      schedule = scrapers.getSchedule(i['COURSEID'], term_id)
-      if schedule == -1:
-        update.message.reply_text("Такого курса нет, либо я ошибка природы :(")
-        return
-      for j in schedule:
-        cell = "\n"
-        cell += "Type: "     + j['ST'] + "\n"
-        cell += "Days: "     + j['DAYS'] + "\n"
-        cell += "Times: "    + j['TIMES'].replace('R', "R(Thursday)") + "\n"
-        cell += "Profs: "    + j['FACULTY'] + "\n"
-        cell += "Enrolled: " + str(j['ENR']) + "/" + str(j['CAPACITY']) + "\n"
-        cell += "Room: "     + j['ROOM'] + "\n"
-        message += cell
-      update.message.reply_text(message)
+        message = ""
+        message += "Abbr: "    + i["ABBR"] + "\n"
+        message += "Title: "   + i["TITLE"] + "\n"
+        message += "ECTS: "    + i["CRECTS"] + "\n"
+        message += "Prereqs: " + i["PREREQ"] + "\n"
+        message += "Coreqs: " + i["COREQ"] + "\n"
+        message += "Antireqs: " + i["ANTIREQ"] + "\n"
+        message += "Description: " + i["SHORTDESC"] + "\n"
+        schedule = scrapers.getSchedule(i['COURSEID'], term_id)
+        if schedule == -1:
+            update.message.reply_text("Такого курса нет, либо я ошибка природы :(")
+            return
+        for j in schedule:
+            cell = "\n"
+            cell += "Type: "     + j['ST'] + "\n"
+            cell += "Days: "     + j['DAYS'] + "\n"
+            cell += "Times: "    + j['TIMES'].replace('R', "R(Thursday)") + "\n"
+            cell += "Profs: "    + j['FACULTY'] + "\n"
+            cell += "Enrolled: " + str(j['ENR']) + "/" + str(j['CAPACITY']) + "\n"
+            cell += "Room: "     + j['ROOM'] + "\n"
+            message += cell
+        update.message.reply_text(message)
   except:
     print("ERROR in getCourseName")
 

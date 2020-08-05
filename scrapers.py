@@ -12,10 +12,9 @@ def getSearchData(data, query):
           occurs[i['ABBR']][0] += 1
         if x.lower() in (i['TITLE']).lower():
           occurs[i['ABBR']][0] += 1
-      if(occurs[i['ABBR']][0] == 0):
+      if(occurs[i['ABBR']][0] < len(words)):
           del occurs[i['ABBR']]
   res = sorted(occurs.items(), key=lambda x: x[1][0], reverse=True)
-
   for i, j in res:
       result.append(j[1])
 
