@@ -38,8 +38,8 @@ def start(update, context):
     print("ERROR in START")
 
 def getCourseName(update, context):
-  # print(update.message.text)
-  # try:
+  print(update.message.text)
+  try:
     query = update.message.text.lower()
     if len(query) < 3:
       update.message.reply_text(random.choice(messages.smallQueryMsg))
@@ -86,8 +86,8 @@ def getCourseName(update, context):
       for c in replace_md:
         message = message.replace(c, "\\" + c)
       update.message.reply_text(message, parse_mode=ParseMode.MARKDOWN_V2)
-  # except:
-    # print("ERROR in getCourseName")
+  except:
+    print("ERROR in getCourseName")
 
 def error():
   print("OTHER ERROR")
