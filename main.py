@@ -38,18 +38,19 @@ def start(update, context):
     print("ERROR in START")
 
 def getCourseName(update, context):
-  print(update.message.text)
+  # print(update.message.text)
   try:
+
     query = update.message.text.lower()
     if len(query) < 3:
       update.message.reply_text(random.choice(messages.smallQueryMsg))
       return
+
     courseList = scrapers.getSearchData(data, query)
 
     if courseList == -1:
       update.message.reply_text(random.choice(messages.emptyCourseListMsg))
       return
-
     for i in courseList:
       message = ""
       message += "Abbr: *"    + i["ABBR"] + "*\n"
@@ -75,7 +76,9 @@ def getCourseName(update, context):
         if int(j['CAPACITY']) > 0:
           percentage = int(j['ENR']) / int(j['CAPACITY'])
         enr_emoji = "🟢"
-        if percentage >= 0.50:
+        if percentage >= 0.49:
+          enr_emoji = "🟡"
+        if percentage >= 0.76:
           enr_emoji = "🟠"
         if percentage >= 0.99:
           enr_emoji = "🔴"
@@ -100,7 +103,7 @@ def main():
 
   dp.add_handler(MessageHandler(Filters.text & ~Filters.command, getCourseName))
   dp.add_error_handler(error)
-  
+
   if DEBUG:
     updater.start_polling()
   else:
@@ -109,7 +112,7 @@ def main():
                         port=PORT,
                         url_path=TOKEN)
     updater.bot.set_webhook("https://schedule-bot-akylzhan.herokuapp.com/" + TOKEN)
-  
+
   updater.idle()
 
 

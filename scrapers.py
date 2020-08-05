@@ -3,9 +3,22 @@ import requests as req
 
 def getSearchData(data, query):
   result = []
+  words = query.split()
+  occurs = {}
   for i in data:
-    if query.lower() in (i['ABBR'] + " " + i['TITLE']).lower():
-      result.append(i)
+      occurs[i['ABBR']] = [0, i]
+      for x in words:
+        if x.lower() in (i['ABBR']).lower():
+          occurs[i['ABBR']][0] += 1
+          continue
+        if x.lower() in (i['TITLE']).lower():
+          occurs[i['ABBR']][0] += 1
+      if(occurs[i['ABBR']][0] < len(words)):
+          del occurs[i['ABBR']]
+  res = sorted(occurs.items(), key=lambda x: x[1][0], reverse=True)
+  for i, j in res:
+      result.append(j[1])
+
   if len(result) > 0:
     return result
   return -1
