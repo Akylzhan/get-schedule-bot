@@ -67,8 +67,8 @@ def getCourseName(update, context):
       for j in schedule:
         cell = "\n"
         cell += "Type: *"     + j['ST'] + "*\n"
-        cell += "Days: "     + j['DAYS'] + "\n"
-        cell += "Times: "    + j['TIMES'].replace('R', "R(Thursday)") + "\n"
+        cell += "Days: "     + j['DAYS'].replace('R', "R(Thursday)") + "\n"
+        cell += "Times: "    + j['TIMES'] + "\n"
         cell += "Profs: *"    + j['FACULTY'].replace('<br>', ',') + "*\n"
         
         percentage = 0
