@@ -3,7 +3,7 @@ import requests as req
 import logging
 
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
-
+from telegram import ParseMode
 import scrapers
 
 
@@ -17,6 +17,8 @@ if DEBUG:
 # TODO: add department ids
 term_id = 521
 data = eval(open("data.json").read())['data']
+
+replace_md = ['`', '(', ')', '+', '-', '.', '!']
 
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -59,14 +61,16 @@ def getCourseName(update, context):
         return
       for j in schedule:
         cell = "\n"
-        cell += "Type: "     + j['ST'] + "\n"
+        cell += "Type: *"     + j['ST'] + "*\n"
         cell += "Days: "     + j['DAYS'] + "\n"
         cell += "Times: "    + j['TIMES'].replace('R', "R(Thursday)") + "\n"
-        cell += "Profs: "    + j['FACULTY'] + "\n"
-        cell += "Enrolled: " + str(j['ENR']) + "/" + str(j['CAPACITY']) + "\n"
+        cell += "Profs: *"    + j['FACULTY'].replace('<br>', ',') + "*\n"
+        cell += "Enrolled: *" + str(j['ENR']) + "/" + str(j['CAPACITY']) + "*\n"
         cell += "Room: "     + j['ROOM'] + "\n"
         message += cell
-      update.message.reply_text(message)
+      for c in replace_md:
+        message = message.replace(c, "\\" + c)
+      update.message.reply_text(message, parse_mode=ParseMode.MARKDOWN_V2)
   except:
     print("ERROR in getCourseName")
 
