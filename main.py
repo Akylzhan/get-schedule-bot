@@ -57,7 +57,7 @@ def getCourseName(update, context):
       message += "Coreqs: " + i["COREQ"].strip() + "\n"
       message += "Antireqs: " + i["ANTIREQ"].strip() + "\n"
       message += "Description: " + i["SHORTDESC"].strip() + "\n"
-      
+
       schedule = scrapers.getSchedule(i['COURSEID'], term_id)
       if schedule == -1:
         update.message.reply_text(random.choice(messages.emptyCourseListMsg))
