@@ -1,5 +1,5 @@
 #!/bin/bash
-curl -sL --output getSearchData.gz 'https://registrar.nu.edu.kz/my-registrar/public-course-catalog/json' \
+curl -sL --output data.gz 'https://registrar.nu.edu.kz/my-registrar/public-course-catalog/json' \
 -X 'POST' \
 -H 'Content-Type: application/x-www-form-urlencoded' \
 -H 'Accept: application/json, text/javascript, */*; q=0.01' \
