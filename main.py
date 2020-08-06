@@ -57,11 +57,11 @@ def getCourseName(update, context):
     keyboard = []
     for i in range(0, len(courseList), 2):
       course1 = courseList[i]
-      button1 = (course1['ABBR'] + " " + course1['TITLE'])[:63]
+      button1 = (course1['ABBR'] + " " + course1['TITLE'])[:30]
       keyboard.append([InlineKeyboardButton(button1, callback_data="i"+button1)])
       if i + 1 != len(courseList):
         course2 = courseList[i + 1]
-        button2 = (course2['ABBR'] + " " + course2['TITLE'])[:63]
+        button2 = (course2['ABBR'] + " " + course2['TITLE'])[:30]
         keyboard[-1].append(InlineKeyboardButton(button2, callback_data="i"+button2))
 
     replyMarkup = InlineKeyboardMarkup(keyboard)
@@ -75,9 +75,9 @@ def sendCourseInfo(update, context):
   formattedInfo = ""
   courseId = ""
   for course in data:
-    if (course['ABBR'] + " " + course['TITLE'])[:63] == query.data[1:]:
+    if (course['ABBR'] + " " + course['TITLE'])[:30] == query.data[1:]:
       formattedInfo, courseId = utilities.formatCourseInfo(course, termId)
-      courseId = courseId + ";" + course['ABBR'] + " " + course['TITLE'][:50]
+      courseId = courseId + ";" + course['ABBR'] + " " + course['TITLE'][:30]
       break
   keyboard = [[InlineKeyboardButton("Schedule", callback_data="s"+courseId)]]
   replyMarkup = InlineKeyboardMarkup(keyboard)
