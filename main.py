@@ -41,8 +41,8 @@ def start(update, context):
 
 
 def getCourseName(update, context):
-  # print(update.message.text)
-  # try:
+  print(update.message.text)
+  try:
     query = update.message.text.lower()
     if len(query) < 3:
       update.message.reply_text(random.choice(messages.smallQueryMsg))
@@ -69,8 +69,8 @@ def getCourseName(update, context):
 
     replyMarkup = InlineKeyboardMarkup(keyboard)
     update.message.reply_text('Please choose:', reply_markup=replyMarkup, parse_mode=ParseMode.MARKDOWN_V2)
-  # except:
-    # context.bot.send_message(chat_id=384134675, text=update.message.text)
+  except:
+    context.bot.send_message(chat_id=384134675, text=update.message.text)
 
 def sendCourseInfo(update, context):
   try:
