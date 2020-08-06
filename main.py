@@ -83,7 +83,7 @@ def sendCourseInfo(update, context):
     replyMarkup = InlineKeyboardMarkup(keyboard)
     query.edit_message_text(text=formattedInfo, reply_markup=replyMarkup, parse_mode=ParseMode.MARKDOWN_V2)
   except:
-    context.bot.send_message(chat_id=384134675, text=update.message.text + "\nERROR in sendCourseInfo")
+    context.bot.send_message(chat_id=384134675, text="ERROR in sendCourseInfo")
 
 
 # also convert schedule to multiple buttons
@@ -99,7 +99,7 @@ def sendSchedule(update, context):
     formattedSchedule = utilities.formattedSchedule(courseId, termId)
     if formattedSchedule == -1:
       query.edit_message_text(text="cannot find schedule or it is too long :(")
-      context.bot.send_message(chat_id=384134675, text=update.message.text + "\nERROR in formattedSchedule")
+      context.bot.send_message(chat_id=384134675, text="ERROR in formattedSchedule")
       return
 
     for c in utilities.replaceMD:
@@ -107,7 +107,8 @@ def sendSchedule(update, context):
     formattedSchedule = f'*{title}*\n{formattedSchedule}'
     query.edit_message_text(text=formattedSchedule, parse_mode=ParseMode.MARKDOWN_V2)
   except:
-    context.bot.send_message(chat_id=384134675, text=update.message.text + "\nERROR in sendSchedule")
+    
+    context.bot.send_message(chat_id=384134675, text="ERROR in sendSchedule")
 
 def error():
   print("OTHER ERROR")
