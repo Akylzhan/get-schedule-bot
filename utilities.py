@@ -8,26 +8,31 @@ def getSearchData(data, query):
   result = []
   words = query.split()
   occurs = {}
-  for i in data:
-      occurs[i['ABBR']] = [0, i]
-      for x in words:
-        if x.lower() in (i['ABBR']).lower():
-          occurs[i['ABBR']][0] += 1
-          continue
-        if x.lower() in (i['TITLE']).lower():
-          occurs[i['ABBR']][0] += 1
-      if occurs[i['ABBR']][0] < len(words):
-          del occurs[i['ABBR']]
-  res = sorted(occurs.items(), key=lambda x: x[1][0], reverse=True)
-  for i, j in res:
-      result.append(j[1])
+
+  for i in range(0, len(data)):
+    abbr = data[i]['ABBR'].lower()
+    title = data[i]['TITLE'].lower()
+    occurs[i] = [0, i]
+
+    for x in words:
+      x = x.lower()
+      if x in abbr:
+        occurs[i][0] += 1
+        continue
+      if x in title:
+        occurs[i][0] += 1
+
+    if occurs[i][0] < len(words):
+      del occurs[i]
+
+  result = [j[1] for i,j in sorted(occurs.items(), key=lambda x: x[1][0], reverse=True)]
 
   if len(result) > 0:
     return result
   return -1
 
 
-def formatCourseInfo(course, termId):
+def formattedCourseInfo(course, termId):
   message = ""
   message += f"*{course['ABBR']}* - *{course['TITLE']}*\n"
   message += f"ECTS: {course['CRECTS']}\n"
@@ -38,7 +43,7 @@ def formatCourseInfo(course, termId):
 
   for c in replaceMD:
     message = message.replace(c, "\\" + c)
-  return message, course['COURSEID']
+  return message
 
 def formattedSchedule(courseId, termId):
   message = ""

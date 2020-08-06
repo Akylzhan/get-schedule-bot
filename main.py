@@ -41,8 +41,8 @@ def start(update, context):
 
 
 def getCourseName(update, context):
-  print(update.message.text)
-  try:
+  # print(update.message.text)
+  # try:
     query = update.message.text.lower()
     if len(query) < 3:
       update.message.reply_text(random.choice(messages.smallQueryMsg))
@@ -56,51 +56,58 @@ def getCourseName(update, context):
 
     keyboard = []
     for i in range(0, len(courseList), 2):
-      course1 = courseList[i]
-      button1 = (course1['ABBR'] + " " + course1['TITLE'])[:30]
-      keyboard.append([InlineKeyboardButton(button1, callback_data="i"+button1)])
+      coursePos1 = courseList[i]
+      course1 = data[coursePos1]
+      button1 = (course1['ABBR'] + " " + course1['TITLE'])
+      keyboard.append([InlineKeyboardButton(button1, callback_data="i"+str(coursePos1))])
+
       if i + 1 != len(courseList):
-        course2 = courseList[i + 1]
-        button2 = (course2['ABBR'] + " " + course2['TITLE'])[:30]
-        keyboard[-1].append(InlineKeyboardButton(button2, callback_data="i"+button2))
+        coursePos2 = courseList[i + 1]
+        course2 = data[coursePos2]
+        button2 = (course2['ABBR'] + " " + course2['TITLE'])
+        keyboard[-1].append(InlineKeyboardButton(button2, callback_data="i"+str(coursePos2)))
 
     replyMarkup = InlineKeyboardMarkup(keyboard)
     update.message.reply_text('Please choose:', reply_markup=replyMarkup, parse_mode=ParseMode.MARKDOWN_V2)
-  except:
-    context.bot.send_message(chat_id=384134675, text=update.message.text)
+  # except:
+    # context.bot.send_message(chat_id=384134675, text=update.message.text)
 
 def sendCourseInfo(update, context):
-  query = update.callback_query
-  query.answer()
-  formattedInfo = ""
-  courseId = ""
-  for course in data:
-    if (course['ABBR'] + " " + course['TITLE'])[:30] == query.data[1:]:
-      formattedInfo, courseId = utilities.formatCourseInfo(course, termId)
-      courseId = courseId + ";" + course['ABBR'] + " " + course['TITLE'][:30]
-      break
-  keyboard = [[InlineKeyboardButton("Schedule", callback_data="s"+courseId)]]
-  replyMarkup = InlineKeyboardMarkup(keyboard)
-  query.edit_message_text(text=formattedInfo, reply_markup=replyMarkup, parse_mode=ParseMode.MARKDOWN_V2)
+  try:
+    query = update.callback_query
+    query.answer()
+    coursePos = int(query.data[1:])
+    formattedInfo = utilities.formattedCourseInfo(data[coursePos], termId)
+
+    keyboard = [[InlineKeyboardButton("Schedule", callback_data="s"+str(coursePos))]]
+    replyMarkup = InlineKeyboardMarkup(keyboard)
+    query.edit_message_text(text=formattedInfo, reply_markup=replyMarkup, parse_mode=ParseMode.MARKDOWN_V2)
+  except:
+    context.bot.send_message(chat_id=384134675, text=update.message.text + "\nERROR in sendCourseInfo")
+
 
 # also convert schedule to multiple buttons
 def sendSchedule(update, context):
   try:
     query = update.callback_query
     query.answer()
-    courseId, title = query.data.split(';')
-    courseId = courseId[1:]
+
+    coursePos = int(query.data[1:])
+    courseId = data[coursePos]['COURSEID']
+    title = data[coursePos]['ABBR'] + " " + data[coursePos]['TITLE']
+
     formattedSchedule = utilities.formattedSchedule(courseId, termId)
     if formattedSchedule == -1:
-      query.edit_message_text(text="cannot find schedule")
-      context.bot.send_message(chat_id=384134675, text=update.message.text + "ERROR in sendSchedule")
+      query.edit_message_text(text="cannot find schedule or it is too long :(")
+      context.bot.send_message(chat_id=384134675, text=update.message.text + "\nERROR in formattedSchedule")
       return
+
     for c in utilities.replaceMD:
-      title.replace(c, '\\'+c)
+      title = title.replace(c, '\\'+c)
     formattedSchedule = f'*{title}*\n{formattedSchedule}'
     query.edit_message_text(text=formattedSchedule, parse_mode=ParseMode.MARKDOWN_V2)
   except:
-    query.edit_message_text(text="schedule is too long like my pp")
+    context.bot.send_message(chat_id=384134675, text=update.message.text + "\nERROR in sendSchedule")
 
 def error():
   print("OTHER ERROR")
