@@ -107,7 +107,9 @@ def sendSchedule(update, context):
     formattedSchedule = f'*{title}*\n{formattedSchedule}'
     query.edit_message_text(text=formattedSchedule, parse_mode=ParseMode.MARKDOWN_V2)
   except:
-    
+    abbr = data[int(query.data[1:])]['ABBR']
+    if abbr[:2] != 'FRE' and abbr[0] == 'F':
+      context.bot.send_message(chat_id=update.effective_message.chat_id, text="If it is NUFYP course, Telegram does not allow me to send too long schedule :(")
     context.bot.send_message(chat_id=384134675, text="ERROR in sendSchedule")
 
 def error():
