@@ -26,6 +26,10 @@ for course in data:
   for key in course:
     course[key] = " ".join(course[key].strip().split())
 
+nufyp_courses = [
+  'FEAP 001', 'FBIO 011', 'FBUS 011', 'FCHM 011',
+  'FGEO 011', 'FHUM 011', 'FPHY 011', 'FMATH 001'
+]
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
@@ -93,8 +97,14 @@ def sendSchedule(update, context):
     query.answer()
 
     coursePos = int(query.data[1:])
+    abbr = data[coursePos]['ABBR']
+    if abbr in nufyp_courses:
+      context.bot.send_message(chat_id=update.effective_message.chat_id, text="NUFYP schedules are too long, Telegram does not allow me to send them :(")
+      return
+
     courseId = data[coursePos]['COURSEID']
-    title = data[coursePos]['ABBR'] + " " + data[coursePos]['TITLE']
+    title = abbr + " " + data[coursePos]['TITLE']
+    # No NUFYP COURSES
 
     formattedSchedule = utilities.formattedSchedule(courseId, termId)
     if formattedSchedule == -1:
@@ -107,9 +117,6 @@ def sendSchedule(update, context):
     formattedSchedule = f'*{title}*\n{formattedSchedule}'
     query.edit_message_text(text=formattedSchedule, parse_mode=ParseMode.MARKDOWN_V2)
   except:
-    abbr = data[int(query.data[1:])]['ABBR']
-    if abbr[:2] != 'FRE' and abbr[0] == 'F':
-      context.bot.send_message(chat_id=update.effective_message.chat_id, text="If it is NUFYP course, Telegram does not allow me to send too long schedule :(")
     context.bot.send_message(chat_id=384134675, text="ERROR in sendSchedule")
 
 def error():
