@@ -99,7 +99,7 @@ def sendSchedule(update, context):
     coursePos = int(query.data[1:])
     abbr = data[coursePos]['ABBR']
     if abbr in nufyp_courses:
-      context.bot.send_message(chat_id=update.effective_message.chat_id, text="NUFYP schedules are too long, Telegram does not allow me to send them :(")
+      context.bot.send_message(chat_id=update.effective_message.chat_id, text=messages.longScheduleMsg)
       return
 
     courseId = data[coursePos]['COURSEID']
