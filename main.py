@@ -17,11 +17,9 @@ TOKEN = "949738996:AAHVrnVCsv4LUP0y-0FNPS_dCs2lCVhcQ08"
 if DEBUG:
   TOKEN = "1201714568:AAHLzZRyHaW3jGXawZJP2-VD8Wr_tMJXa2E"
 
-# TODO: add priorities
-# TODO: add other term_ids
-# TODO: add department ids
-termId = 521
-courseList = eval(open("courseList.json").read())['data']
+# manually change termId in getInfo.sh
+termId = int(eval(open("data/semesters.json", 'r').read())[0]['ID'])
+courseList = eval(open("data/courseList.json", 'r').read())['data']
 for course in courseList:
   for key in course:
     course[key] = " ".join(course[key].strip().split())
@@ -45,8 +43,8 @@ def start(update, context):
 
 
 def getCourseName(update, context):
-  # print(update.message.text)
-  # try:
+  print(update.message.text)
+  try:
     query = update.message.text.lower()
     if len(query) < 3:
       update.message.reply_text(random.choice(messages.smallQueryMsg))
@@ -73,8 +71,8 @@ def getCourseName(update, context):
 
     replyMarkup = InlineKeyboardMarkup(keyboard)
     update.message.reply_text('Please choose:', reply_markup=replyMarkup, parse_mode=ParseMode.MARKDOWN_V2)
-  # except:
-  #   context.bot.send_message(chat_id=384134675, text=update.message.text)
+  except:
+    context.bot.send_message(chat_id=384134675, text=update.message.text)
 
 def sendCourseInfo(update, context):
   try:
