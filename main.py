@@ -41,6 +41,35 @@ def start(update, context):
   except:
     print("ERROR in START")
 
+def listOfProfs(update, context):
+  try:
+    arg1 = context.args[0]
+    arg2 = context.args[0]
+    if len(context.args) > 1:
+      arg2 = context.args[1]
+
+    if len(arg1) < 3 and len(arg2) < 3:
+      update.message.reply_text(random.choice(messages.smallQueryMsg))
+      return
+
+    profs = utilities.searchProf(arg1, arg2)
+
+    if len(profs) == 0:
+      update.message.reply_text("Could not find this prof")
+      return
+
+    keyboard = []
+    for name in profs:
+      keyboard.append([InlineKeyboardButton(name, callback_data="rate"+name+";"+profs[name])])
+
+    replyMarkup = InlineKeyboardMarkup(keyboard)
+    update.message.reply_text('Please choose:', reply_markup=replyMarkup, parse_mode=ParseMode.MARKDOWN_V2)
+
+  except (IndexError):
+    update.message.reply_text("Usage: '/rate ProfName ProfSurname' or '/rate ProfName'")
+  except:
+    print("ERROR in listOfProfs")
+
 
 def getCourseName(update, context):
   print(update.message.text)
@@ -73,6 +102,7 @@ def getCourseName(update, context):
     update.message.reply_text('Please choose:', reply_markup=replyMarkup, parse_mode=ParseMode.MARKDOWN_V2)
   except:
     context.bot.send_message(chat_id=384134675, text=update.message.text)
+
 
 def sendCourseInfo(update, context):
   try:
@@ -116,6 +146,35 @@ def sendSchedule(update, context):
   except:
     context.bot.send_message(chat_id=384134675, text="ERROR in sendSchedule")
 
+
+def rateProf(update, context):
+  query = update.callback_query
+  query.answer()
+  query = query[4:].split(';')
+  name = query[0]
+  id = query[1]
+
+  keyboard = [
+    InlineKeyboardButton('1 star', callback_data="ratingbutton"+name+";"+id+';1'),
+    InlineKeyboardButton('2 star', callback_data="ratingbutton"+name+";"+id+';2'),
+    InlineKeyboardButton('3 star', callback_data="ratingbutton"+name+";"+id+';3'),
+    InlineKeyboardButton('4 star', callback_data="ratingbutton"+name+";"+id+';4'),
+    InlineKeyboardButton('5 star', callback_data="ratingbutton"+name+";"+id+';5')
+  ]
+  replyMarkup = InlineKeyboardMarkup(keyboard)
+  query.edit_message_text(text=f'Please rate *{name}*:', reply_markup=replyMarkup, parse_mode=ParseMode.MARKDOWN_V2)
+
+
+def ratingButton(update, context):
+  query = update.callback_query
+  query = query[12:].split(';')
+  name = query[0]
+  id = query[1]
+  rating = query[2]
+  rating = utilities.rateProf(id, update.effective_message.chat_id, rating)
+  query.edit_message_text(text=f'Thanks for rating *{name}*\nCurrent rating:{rating}')
+
+
 def error():
   print("OTHER ERROR")
 
@@ -125,9 +184,12 @@ def main():
   dp = updater.dispatcher
 
   dp.add_handler(CommandHandler("start", start))
+  dp.add_handler(CommandHandler("rate", listOfProfs))
   dp.add_handler(MessageHandler(Filters.text & ~Filters.command, getCourseName))
   dp.add_handler(CallbackQueryHandler(sendCourseInfo, pattern="^i"))
   dp.add_handler(CallbackQueryHandler(sendSchedule, pattern="^s"))
+  dp.add_handler(CallbackQueryHandler(rateProf, pattern="^rate"))
+  dp.add_handler(CallbackQueryHandler(ratingButton, pattern="^ratingbutton"))
   dp.add_error_handler(error)
 
   if DEBUG:

@@ -1,7 +1,34 @@
 import os
 import requests as req
 
+from database import Database
 replaceMD = ['`', '(', ')', '+', '-', '.', '!']
+
+db = Database()
+
+instr = eval(open('data/instructors.json', 'r').read())
+instructors = {}
+for i in instr:
+  instructors[i['NAME']] = i['ID']
+
+
+def rateProf(profId, userId, rating):
+  return db.rate(profId, userId, rating)
+
+
+def showRatingOfProf(profId):
+  return db.calculateRating(profId)
+
+
+def searchProf(arg1, arg2):
+  result = []
+  arg1 = arg1.lower()
+  arg2 = arg2.lower()
+  for name in instructors:
+    if arg1 in name or arg2 in name:
+      result.append({name, instructors[name]})
+  return result
+
 
 
 def getSearchData(data, query):
@@ -45,6 +72,7 @@ def formattedCourseInfo(course, termId):
     message = message.replace(c, "\\" + c)
   return message
 
+
 def formattedSchedule(courseId, termId):
   message = ""
   schedule = getSchedule(courseId, termId)
@@ -57,7 +85,16 @@ def formattedSchedule(courseId, termId):
     cell += f"Type: *{j['ST']}*\n"
     cell += f"Days: {j['DAYS'].replace('R', 'R(Thursday)')}\n"
     cell += f"Times: {j['TIMES']}\n"
-    cell += f"Profs: *{j['FACULTY'].replace('<br>', ',')}*\n"
+
+    faculty = j['FACULTY'].split('<br>')
+    for i in range(0, len(faculty)):
+      if faculty[i] in instructors:
+        rating = showRatingOfProf(instructors[faculty[i]])
+        if rating > 0:
+          faculty[i] = faculty[i] + ' (' + rating + '/5.0)'
+    faculty = ', '.join(faculty)
+
+    cell += f"Profs: *{faculty}*\n"
 
     percentage = 0
     if int(j['CAPACITY']) > 0:
