@@ -21,12 +21,12 @@ if DEBUG:
 # TODO: add other term_ids
 # TODO: add department ids
 termId = 521
-data = eval(open("data.json").read())['data']
-for course in data:
+courseList = eval(open("courseList.json").read())['data']
+for course in courseList:
   for key in course:
     course[key] = " ".join(course[key].strip().split())
 
-nufyp_courses = [
+nufypCourses = [
   'FEAP 001', 'FBIO 011', 'FBUS 011', 'FCHM 011',
   'FGEO 011', 'FHUM 011', 'FPHY 011', 'FMATH 001'
 ]
@@ -52,22 +52,22 @@ def getCourseName(update, context):
       update.message.reply_text(random.choice(messages.smallQueryMsg))
       return
 
-    courseList = utilities.getSearchData(data, query)
+    searchResult = utilities.getSearchData(courseList, query)
 
-    if courseList == -1:
+    if searchResult == -1:
       update.message.reply_text(random.choice(messages.emptyCourseListMsg))
       return
 
     keyboard = []
-    for i in range(0, len(courseList), 2):
-      coursePos1 = courseList[i]
-      course1 = data[coursePos1]
+    for i in range(0, len(searchResult), 2):
+      coursePos1 = searchResult[i]
+      course1 = courseList[coursePos1]
       button1 = (course1['ABBR'] + " " + course1['TITLE'])
       keyboard.append([InlineKeyboardButton(button1, callback_data="i"+str(coursePos1))])
 
       if i + 1 != len(courseList):
-        coursePos2 = courseList[i + 1]
-        course2 = data[coursePos2]
+        coursePos2 = searchResult[i + 1]
+        course2 = courseList[coursePos2]
         button2 = (course2['ABBR'] + " " + course2['TITLE'])
         keyboard[-1].append(InlineKeyboardButton(button2, callback_data="i"+str(coursePos2)))
 
@@ -81,7 +81,7 @@ def sendCourseInfo(update, context):
     query = update.callback_query
     query.answer()
     coursePos = int(query.data[1:])
-    formattedInfo = utilities.formattedCourseInfo(data[coursePos], termId)
+    formattedInfo = utilities.formattedCourseInfo(courseList[coursePos], termId)
 
     keyboard = [[InlineKeyboardButton("Schedule", callback_data="s"+str(coursePos))]]
     replyMarkup = InlineKeyboardMarkup(keyboard)
@@ -97,13 +97,13 @@ def sendSchedule(update, context):
     query.answer()
 
     coursePos = int(query.data[1:])
-    abbr = data[coursePos]['ABBR']
-    if abbr in nufyp_courses:
+    abbr = courseList[coursePos]['ABBR']
+    if abbr in nufypCourses:
       context.bot.send_message(chat_id=update.effective_message.chat_id, text=messages.longScheduleMsg)
       return
 
-    courseId = data[coursePos]['COURSEID']
-    title = abbr + " " + data[coursePos]['TITLE']
+    courseId = courseList[coursePos]['COURSEID']
+    title = abbr + " " + courseList[coursePos]['TITLE']
 
     formattedSchedule = utilities.formattedSchedule(courseId, termId)
     if formattedSchedule == -1:
