@@ -104,7 +104,6 @@ def sendSchedule(update, context):
 
     courseId = data[coursePos]['COURSEID']
     title = abbr + " " + data[coursePos]['TITLE']
-    # No NUFYP COURSES
 
     formattedSchedule = utilities.formattedSchedule(courseId, termId)
     if formattedSchedule == -1:
