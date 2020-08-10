@@ -4,6 +4,7 @@ chardet==3.0.4
 cryptography==3.0
 decorator==4.4.2
 idna==2.10
+psycopg2-binary==2.8.5
 pycparser==2.20
 python-telegram-bot==12.8
 requests==2.24.0

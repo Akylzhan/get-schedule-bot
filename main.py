@@ -17,11 +17,9 @@ TOKEN = "949738996:AAHVrnVCsv4LUP0y-0FNPS_dCs2lCVhcQ08"
 if DEBUG:
   TOKEN = "1201714568:AAHLzZRyHaW3jGXawZJP2-VD8Wr_tMJXa2E"
 
-# TODO: add priorities
-# TODO: add other term_ids
-# TODO: add department ids
-termId = 521
-courseList = eval(open("courseList.json").read())['data']
+# manually change termId in getInfo.sh
+termId = int(eval(open("data/semesters.json", 'r').read())[0]['ID'])
+courseList = eval(open("data/courseList.json", 'r').read())['data']
 for course in courseList:
   for key in course:
     course[key] = " ".join(course[key].strip().split())
@@ -43,10 +41,40 @@ def start(update, context):
   except:
     print("ERROR in START")
 
+def listOfProfs(update, context):
+  try:
+    arg1 = context.args[0]
+    arg2 = context.args[0]
+    if len(context.args) > 1:
+      arg2 = context.args[1]
+
+    if len(arg1) < 3 and len(arg2) < 3:
+      update.message.reply_text(random.choice(messages.smallQueryMsg))
+      return
+
+    profs = utilities.searchProf(arg1, arg2)
+    if len(profs) == 0:
+      update.message.reply_text("Could not find this prof")
+      return
+
+    keyboard = []
+    for prof in profs:
+      name = prof['NAME']
+      id = prof['ID']
+      keyboard.append([InlineKeyboardButton(name, callback_data="rate"+name+";"+id)])
+
+    replyMarkup = InlineKeyboardMarkup(keyboard)
+    update.message.reply_text('Please choose:', reply_markup=replyMarkup, parse_mode=ParseMode.MARKDOWN_V2)
+
+  except (IndexError):
+    update.message.reply_text("Usage: '/rate ProfName ProfSurname' or '/rate ProfName'")
+  except:
+    print("ERROR in listOfProfs")
+
 
 def getCourseName(update, context):
-  # print(update.message.text)
-  # try:
+  print(update.message.text)
+  try:
     query = update.message.text.lower()
     if len(query) < 3:
       update.message.reply_text(random.choice(messages.smallQueryMsg))
@@ -73,8 +101,9 @@ def getCourseName(update, context):
 
     replyMarkup = InlineKeyboardMarkup(keyboard)
     update.message.reply_text('Please choose:', reply_markup=replyMarkup, parse_mode=ParseMode.MARKDOWN_V2)
-  # except:
-  #   context.bot.send_message(chat_id=384134675, text=update.message.text)
+  except:
+    context.bot.send_message(chat_id=384134675, text=update.message.text)
+
 
 def sendCourseInfo(update, context):
   try:
@@ -90,7 +119,6 @@ def sendCourseInfo(update, context):
     context.bot.send_message(chat_id=384134675, text="ERROR in sendCourseInfo")
 
 
-# also convert schedule to multiple buttons
 def sendSchedule(update, context):
   try:
     query = update.callback_query
@@ -118,6 +146,37 @@ def sendSchedule(update, context):
   except:
     context.bot.send_message(chat_id=384134675, text="ERROR in sendSchedule")
 
+
+def rateProf(update, context):
+  query = update.callback_query
+  query.answer()
+  data = query.data[4:].split(';')
+  name = data[0]
+  id = data[1]
+  keyboard = [
+    [InlineKeyboardButton('1 star', callback_data="ratingbutton"+name+";"+id+';1')],
+    [InlineKeyboardButton('2 star', callback_data="ratingbutton"+name+";"+id+';2')],
+    [InlineKeyboardButton('3 star', callback_data="ratingbutton"+name+";"+id+';3')],
+    [InlineKeyboardButton('4 star', callback_data="ratingbutton"+name+";"+id+';4')],
+    [InlineKeyboardButton('5 star', callback_data="ratingbutton"+name+";"+id+';5')]
+  ]
+  replyMarkup = InlineKeyboardMarkup(keyboard)
+  query.edit_message_text(text=f'Please rate *{name}*:', reply_markup=replyMarkup, parse_mode=ParseMode.MARKDOWN_V2)
+
+
+def ratingButton(update, context):
+  query = update.callback_query
+  data = query.data[12:].split(';')
+  name = data[0]
+  id = data[1]
+  rating = data[2]
+  rating = str(utilities.rateProf(id, str(update.effective_message.chat_id), rating))
+  for c in utilities.replaceMD:
+      rating = rating.replace(c, '\\'+c)
+      name = name.replace(c, '\\'+c)
+  query.edit_message_text(text=f'Thanks for rating *{name}*\nCurrent rating: {rating}', parse_mode=ParseMode.MARKDOWN_V2)
+
+
 def error():
   print("OTHER ERROR")
 
@@ -127,9 +186,12 @@ def main():
   dp = updater.dispatcher
 
   dp.add_handler(CommandHandler("start", start))
+  dp.add_handler(CommandHandler("rate", listOfProfs))
   dp.add_handler(MessageHandler(Filters.text & ~Filters.command, getCourseName))
   dp.add_handler(CallbackQueryHandler(sendCourseInfo, pattern="^i"))
   dp.add_handler(CallbackQueryHandler(sendSchedule, pattern="^s"))
+  dp.add_handler(CallbackQueryHandler(rateProf, pattern="^rate"))
+  dp.add_handler(CallbackQueryHandler(ratingButton, pattern="^ratingbutton"))
   dp.add_error_handler(error)
 
   if DEBUG:
