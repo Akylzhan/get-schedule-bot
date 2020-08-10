@@ -26,12 +26,13 @@ def searchProf(arg1, arg2):
   arg2 = arg2.lower()
   for name in instructors:
     lower_name = name.lower()
-    if arg1 in lower_name or arg2 in lower_name:
+    if arg1 in lower_name and arg2 in lower_name:
       result.append({"NAME": name, "ID": instructors[name]})
   return result
 
 
 def getProfId(nameSurname):
+  nameSurname = nameSurname.replace(',', '')
   delim = ' '
 
   if ',' in nameSurname:
@@ -40,7 +41,7 @@ def getProfId(nameSurname):
 
   for i in instructors:
     if name in i and surname in i:
-      return instructors[i]
+      return i, instructors[i]
 
 def getSearchData(data, query):
   result = []
@@ -97,14 +98,20 @@ def formattedSchedule(courseId, termId):
     cell += f"Days: {j['DAYS'].replace('R', 'R(Thursday)')}\n"
     cell += f"Times: {j['TIMES']}\n"
 
-    faculty = j['FACULTY'].split('<br>')
+    faculty = []
+    if '<br>' in faculty:
+      faculty = j['FACULTY'].split('<br>')
+    else:
+      s = j['FACULTY'].split()
+      faculty.append(' '.join(s[:2]))
+      faculty.append(' '.join(s[-2:]))
     for i in range(0, len(faculty)):
       # all combinations
-      profId = getProfId(faculty[i])
+      name, profId = getProfId(faculty[i])
       rating = showRatingOfProf(profId)
 
       if rating > 0:
-        faculty[i] = faculty[i] + ' (' + str(rating) + '/5.0)'
+        faculty[i] = name + ' (' + str(rating) + '/5.0)'
     faculty = ', '.join(faculty)
 
     cell += f"Profs: *{faculty}*\n"
