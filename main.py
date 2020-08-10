@@ -69,7 +69,7 @@ def listOfProfs(update, context):
   except (IndexError):
     update.message.reply_text("Usage: '/rate ProfName ProfSurname' or '/rate ProfName'")
   except:
-    print("ERROR in listOfProfs")
+    print(' '.join(context.args) + " ERROR in listOfProfs")
 
 
 def getCourseName(update, context):
@@ -116,7 +116,7 @@ def sendCourseInfo(update, context):
     replyMarkup = InlineKeyboardMarkup(keyboard)
     query.edit_message_text(text=formattedInfo, reply_markup=replyMarkup, parse_mode=ParseMode.MARKDOWN_V2)
   except:
-    context.bot.send_message(chat_id=384134675, text="ERROR in sendCourseInfo")
+    context.bot.send_message(chat_id=384134675, text=courseList[coursePos]['ABBR']+" ERROR in sendCourseInfo")
 
 
 def sendSchedule(update, context):
@@ -144,7 +144,7 @@ def sendSchedule(update, context):
     formattedSchedule = f'*{title}*\n{formattedSchedule}'
     query.edit_message_text(text=formattedSchedule, parse_mode=ParseMode.MARKDOWN_V2)
   except:
-    context.bot.send_message(chat_id=384134675, text="ERROR in sendSchedule")
+    context.bot.send_message(chat_id=384134675, text=courseList[int(query.data[1:])]['ABBR']+" ERROR in sendSchedule")
 
 
 def rateProf(update, context):
@@ -160,6 +160,8 @@ def rateProf(update, context):
     [InlineKeyboardButton('4 star', callback_data="ratingbutton"+name+";"+id+';4')],
     [InlineKeyboardButton('5 star', callback_data="ratingbutton"+name+";"+id+';5')]
   ]
+  for c in utilities.replaceMD:
+    name = name.replace(c, '\\' + c)
   replyMarkup = InlineKeyboardMarkup(keyboard)
   query.edit_message_text(text=f'Please rate *{name}*:', reply_markup=replyMarkup, parse_mode=ParseMode.MARKDOWN_V2)
 
@@ -170,10 +172,11 @@ def ratingButton(update, context):
   name = data[0]
   id = data[1]
   rating = data[2]
+
   rating = str(utilities.rateProf(id, str(update.effective_message.chat_id), rating))
   for c in utilities.replaceMD:
-      rating = rating.replace(c, '\\'+c)
-      name = name.replace(c, '\\'+c)
+      rating = rating.replace(c, '\\' + c)
+      name = name.replace(c, '\\' + c)
   query.edit_message_text(text=f'Thanks for rating *{name}*\nCurrent rating: {rating}', parse_mode=ParseMode.MARKDOWN_V2)
 
 
