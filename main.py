@@ -60,7 +60,6 @@ def listOfProfs(update, context):
     keyboard = []
     for prof in profs:
       name = prof['NAME']
-      print(name)
       id = prof['ID']
       keyboard.append([InlineKeyboardButton(name, callback_data="rate"+name+";"+id)])
 
