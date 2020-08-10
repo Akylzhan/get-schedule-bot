@@ -3,8 +3,10 @@ import requests as req
 import logging
 import random
 
+
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from telegram.ext import CallbackQueryHandler, ConversationHandler
+from telegram.ext.dispatcher import run_async
 from telegram import ParseMode, InlineKeyboardButton, InlineKeyboardMarkup
 
 import utilities
@@ -40,6 +42,7 @@ def start(update, context):
     update.message.reply_text(messages.startMsg)
   except:
     print("ERROR in START")
+
 
 def listOfProfs(update, context):
   try:
@@ -122,9 +125,10 @@ def sendCourseInfo(update, context):
 def sendSchedule(update, context):
   try:
     query = update.callback_query
-
+    query.answer()
     coursePos = int(query.data[1:])
     abbr = courseList[coursePos]['ABBR']
+
     if abbr in nufypCourses:
       context.bot.send_message(chat_id=update.effective_message.chat_id, text=messages.longScheduleMsg)
       return

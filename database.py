@@ -33,7 +33,7 @@ class Database:
                      ON CONFLICT (prof_id) DO NOTHING
                      """
     self.cursor.execute(createTableQuery)
-    
+
     for i in self.instructors:
       values = (i['ID'],)
       self.cursor.execute(insertRowQuery, values)

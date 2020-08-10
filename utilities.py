@@ -1,5 +1,6 @@
 import os
 import requests as req
+import time
 
 from database import Database
 replaceMD = ['`', '(', ')', '+', '-', '.', '!']
@@ -10,6 +11,20 @@ instr = eval(open('data/instructors.json', 'r').read())
 instructors = {}
 for i in instr:
   instructors[i['NAME']] = i['ID']
+
+
+r = req.Session()
+getScheduleHeaders = {
+      'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0',
+      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+      'Accept-Language': 'en-US,en;q=0.5',
+      'Accept-Encoding': 'gzip, deflate',
+      'Referer': 'https://registrar.nu.edu.kz/index.php?q=user/login',
+      'DNT': '1',
+      'Connection': 'close',
+      'Upgrade-Insecure-Requests': '1'
+  }
+getScheduleUrl = "https://registrar.nu.edu.kz/my-registrar/public-course-catalog/json?method=getSchedule&courseId={}&termId={}"
 
 
 def rateProf(profId, userId, rating):
@@ -42,6 +57,7 @@ def getProfId(nameSurname):
   for i in instructors:
     if name in i and surname in i:
       return i, instructors[i]
+
 
 def getSearchData(data, query):
   result = []
@@ -88,10 +104,9 @@ def formattedCourseInfo(course, termId):
 def formattedSchedule(courseId, termId):
   message = ""
   schedule = getSchedule(courseId, termId)
-
   if schedule == -1:
     return -1
-
+  profRatingSet = {}
   for j in schedule:
     cell = "\n"
     cell += f"*{j['ST']}*\n"
@@ -108,7 +123,13 @@ def formattedSchedule(courseId, termId):
     for i in range(0, len(faculty)):
       # all combinations
       name, profId = getProfId(faculty[i])
-      rating = showRatingOfProf(profId)
+
+      rating = 0
+      if profId in profRatingSet:
+        rating = profRatingSet[profId]
+      else:
+        rating = round(showRatingOfProf(profId), 2)
+        profRatingSet[profId] = rating
 
       if rating > 0:
         faculty[i] = name + ' (' + str(rating) + '/5.0)'
@@ -138,20 +159,8 @@ def formattedSchedule(courseId, termId):
 
 
 def getSchedule(courseId, termId):
-  r = req.Session()
-  headers = {
-      'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0',
-      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-      'Accept-Language': 'en-US,en;q=0.5',
-      'Accept-Encoding': 'gzip, deflate',
-      'Referer': 'https://registrar.nu.edu.kz/index.php?q=user/login',
-      'DNT': '1',
-      'Connection': 'close',
-      'Upgrade-Insecure-Requests': '1'
-  }
-  url = "https://registrar.nu.edu.kz/my-registrar/public-course-catalog/json?method=getSchedule&courseId={}&termId={}"
   try:
-    courseSchedule = r.post(url.format(courseId, termId), headers=headers).text
+    courseSchedule = r.post(getScheduleUrl.format(courseId, termId), headers=getScheduleHeaders).text
     if len(courseSchedule) > 2:
       courseSchedule = eval(courseSchedule.replace('false', 'False'))
       return courseSchedule
