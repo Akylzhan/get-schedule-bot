@@ -94,8 +94,8 @@ def formattedSchedule(courseId, termId):
 
   for j in schedule:
     cell = "\n"
-    cell += f"Type: *{j['ST']}*\n"
-    cell += f"Days: {j['DAYS'].replace('R', 'R(Thursday)')}\n"
+    cell += f"*{j['ST']}*\n"
+    cell += f"Days: {j['DAYS']}\n"
     cell += f"Times: {j['TIMES']}\n"
 
     faculty = []
@@ -112,7 +112,7 @@ def formattedSchedule(courseId, termId):
 
       if rating > 0:
         faculty[i] = name + ' (' + str(rating) + '/5.0)'
-    faculty = ', '.join(faculty)
+    faculty = ', '.join(set([i.replace(',','') for i in faculty]))
 
     cell += f"Profs: *{faculty}*\n"
 
