@@ -53,14 +53,15 @@ def listOfProfs(update, context):
       return
 
     profs = utilities.searchProf(arg1, arg2)
-
     if len(profs) == 0:
       update.message.reply_text("Could not find this prof")
       return
 
     keyboard = []
-    for name in profs:
-      keyboard.append([InlineKeyboardButton(name, callback_data="rate"+name+";"+profs[name])])
+    for prof in profs:
+      name = prof['NAME']
+      id = prof['ID']
+      keyboard.append([InlineKeyboardButton(name, callback_data="rate"+name+";"+id)])
 
     replyMarkup = InlineKeyboardMarkup(keyboard)
     update.message.reply_text('Please choose:', reply_markup=replyMarkup, parse_mode=ParseMode.MARKDOWN_V2)
@@ -118,7 +119,6 @@ def sendCourseInfo(update, context):
     context.bot.send_message(chat_id=384134675, text="ERROR in sendCourseInfo")
 
 
-# also convert schedule to multiple buttons
 def sendSchedule(update, context):
   try:
     query = update.callback_query
@@ -150,16 +150,15 @@ def sendSchedule(update, context):
 def rateProf(update, context):
   query = update.callback_query
   query.answer()
-  query = query[4:].split(';')
-  name = query[0]
-  id = query[1]
-
+  data = query.data[4:].split(';')
+  name = data[0]
+  id = data[1]
   keyboard = [
-    InlineKeyboardButton('1 star', callback_data="ratingbutton"+name+";"+id+';1'),
-    InlineKeyboardButton('2 star', callback_data="ratingbutton"+name+";"+id+';2'),
-    InlineKeyboardButton('3 star', callback_data="ratingbutton"+name+";"+id+';3'),
-    InlineKeyboardButton('4 star', callback_data="ratingbutton"+name+";"+id+';4'),
-    InlineKeyboardButton('5 star', callback_data="ratingbutton"+name+";"+id+';5')
+    [InlineKeyboardButton('1 star', callback_data="ratingbutton"+name+";"+id+';1')],
+    [InlineKeyboardButton('2 star', callback_data="ratingbutton"+name+";"+id+';2')],
+    [InlineKeyboardButton('3 star', callback_data="ratingbutton"+name+";"+id+';3')],
+    [InlineKeyboardButton('4 star', callback_data="ratingbutton"+name+";"+id+';4')],
+    [InlineKeyboardButton('5 star', callback_data="ratingbutton"+name+";"+id+';5')]
   ]
   replyMarkup = InlineKeyboardMarkup(keyboard)
   query.edit_message_text(text=f'Please rate *{name}*:', reply_markup=replyMarkup, parse_mode=ParseMode.MARKDOWN_V2)
@@ -167,12 +166,15 @@ def rateProf(update, context):
 
 def ratingButton(update, context):
   query = update.callback_query
-  query = query[12:].split(';')
-  name = query[0]
-  id = query[1]
-  rating = query[2]
-  rating = utilities.rateProf(id, update.effective_message.chat_id, rating)
-  query.edit_message_text(text=f'Thanks for rating *{name}*\nCurrent rating:{rating}')
+  data = query.data[12:].split(';')
+  name = data[0]
+  id = data[1]
+  rating = data[2]
+  rating = str(utilities.rateProf(id, str(update.effective_message.chat_id), rating))
+  for c in utilities.replaceMD:
+      rating = rating.replace(c, '\\'+c)
+      name = name.replace(c, '\\'+c)
+  query.edit_message_text(text=f'Thanks for rating *{name}*\nCurrent rating: {rating}', parse_mode=ParseMode.MARKDOWN_V2)
 
 
 def error():

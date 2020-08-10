@@ -1,11 +1,18 @@
 import psycopg2
+import os
 
 class Database:
   def __init__(self, table="users"):
-    self.connection = psycopg2.connect(
-                host="localhost",
-                database="training",
-                user="akylzhansauranbay")
+    DATABASE_URL = os.environ.get('DATABASE_URL')
+    self.connection = None
+    if DATABASE_URL is None:
+      self.connection = psycopg2.connect(
+                  host="localhost",
+                  database="training",
+                  user="akylzhansauranbay")
+    else:
+      self.connection = psycopg2.connect(DATABASE_URL, sslmode='require')
+
     self.tableName = table
     # TODO: copy instructors to utilities.py
     # but change it to table 'NameSurname': ID
@@ -35,7 +42,6 @@ class Database:
 
   def rate(self, profId, userId, rating):
     insertQuery = """UPDATE bot_table SET ratings = '{}' WHERE prof_id = '{}'"""
-
     oldRating = self.listOfRatings(profId)
     if oldRating is None:
       self.cursor.execute(insertQuery.format(f'{userId} {rating},', profId))
@@ -81,8 +87,4 @@ class Database:
         s += int(r[1])
     return s / (len(ratings) - 1)
 
-
-# db = Database()
-# print(db.rate('9677', "Ayana",  "2"))
-# print(db.listOfRatings('9677'))
-# print(db.calculateRating('9677'))
+# update bot_table set ratings = null where prof_id = '8703';
