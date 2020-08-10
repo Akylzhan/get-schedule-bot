@@ -116,13 +116,12 @@ def sendCourseInfo(update, context):
     replyMarkup = InlineKeyboardMarkup(keyboard)
     query.edit_message_text(text=formattedInfo, reply_markup=replyMarkup, parse_mode=ParseMode.MARKDOWN_V2)
   except:
-    context.bot.send_message(chat_id=384134675, text=courseList[coursePos]['ABBR']+" ERROR in sendCourseInfo")
+    context.bot.send_message(chat_id=384134675, text=courseList[int(query.data[1:])]['ABBR']+" ERROR in sendCourseInfo")
 
 
 def sendSchedule(update, context):
   try:
     query = update.callback_query
-    query.answer()
 
     coursePos = int(query.data[1:])
     abbr = courseList[coursePos]['ABBR']
