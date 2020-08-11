@@ -123,7 +123,7 @@ def sendCourseInfo(update, context):
 
 
 def sendSchedule(update, context):
-  try:
+  # try:
     query = update.callback_query
     query.answer()
     coursePos = int(query.data[1:])
@@ -146,8 +146,8 @@ def sendSchedule(update, context):
       title = title.replace(c, '\\'+c)
     formattedSchedule = f'*{title}*\n{formattedSchedule}'
     query.edit_message_text(text=formattedSchedule, parse_mode=ParseMode.MARKDOWN_V2)
-  except:
-    context.bot.send_message(chat_id=384134675, text=courseList[int(query.data[1:])]['ABBR']+" ERROR in sendSchedule")
+  # except:
+  #   context.bot.send_message(chat_id=384134675, text=courseList[int(query.data[1:])]['ABBR']+" ERROR in sendSchedule")
 
 
 def rateProf(update, context):
@@ -176,11 +176,13 @@ def ratingButton(update, context):
   id = data[1]
   rating = data[2]
 
-  rating = str(utilities.rateProf(id, str(update.effective_message.chat_id), rating))
+  rating, count_ratings = utilities.rateProf(id, str(update.effective_message.chat_id), rating)
+  rating = str(rating)
+  count_ratings = str(int(count_ratings))
   for c in utilities.replaceMD:
       rating = rating.replace(c, '\\' + c)
       name = name.replace(c, '\\' + c)
-  query.edit_message_text(text=f'Thanks for rating *{name}*\nCurrent rating: {rating}', parse_mode=ParseMode.MARKDOWN_V2)
+  query.edit_message_text(text=f'Thanks for rating *{name}*\nCurrent rating: {rating} \\({count_ratings} people rated\\)', parse_mode=ParseMode.MARKDOWN_V2)
 
 
 def error():

@@ -128,12 +128,12 @@ def formattedSchedule(courseId, termId):
       if profId in profRatingSet:
         rating = profRatingSet[profId]
       else:
-        rating = round(showRatingOfProf(profId), 2)
+        rating, count_ratings = showRatingOfProf(profId)
         profRatingSet[profId] = rating
 
       if rating > 0:
-        faculty[i] = name + ' (' + str(rating) + '/5.0)'
-    faculty = ', '.join(set([i.replace(',','') for i in faculty]))
+        faculty[i] = f'{name} ({str(rating)}/5.0# {count_ratings} rated)'
+    faculty = ', '.join(set([i.replace(',','').replace('#',',') for i in faculty]))
 
     cell += f"Profs: *{faculty}*\n"
 

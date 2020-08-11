@@ -78,13 +78,14 @@ class Database:
   def calculateRating(self, profId):
     ratings = self.listOfRatings(profId)
     if not ratings:
-      return 0
+      return 0, 0
     ratings = ratings.split(',')
+    count_ratings = len(ratings) - 1
     s = 0
     for r in ratings:
       r = r.split()
       if r:
         s += int(r[1])
-    return round(s / (len(ratings) - 1), 2)
+    return round(s / (count_ratings), 2), count_ratings
 
 # update bot_table set ratings = null where prof_id = '8703';
