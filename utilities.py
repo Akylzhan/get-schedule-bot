@@ -121,12 +121,13 @@ def formattedSchedule(courseId, termId):
       s = j['FACULTY'].split()
       faculty.append(' '.join(s[:2]))
       faculty.append(' '.join(s[-2:]))
+    formattedFaculty = []
     for i in range(0, len(faculty)):
       # all combinations
       name, profId = getProfId(faculty[i])
-      # if profId in profIdSet:
-      #   continue
-      # profIdSet.append(profId)
+      if profId in profIdSet:
+        continue
+      profIdSet.append(profId)
 
       rating = 0
       count_ratings = 0
@@ -137,8 +138,10 @@ def formattedSchedule(courseId, termId):
         profRatingSet[profId] = [rating,count_ratings]
 
       if rating > 0:
-        faculty[i] = f'{name} ({str(rating)}/5.0# {str(count_ratings)} people rated)'
-    faculty = ', '.join(set([i.replace(',','').replace('#',',') for i in faculty]))
+        formattedFaculty.append(f'{name} ({str(rating)}/5.0# {str(count_ratings)} people rated)')
+      else:
+        formattedFaculty.append(faculty[i])
+    faculty = ', '.join(set([i.replace(',','').replace('#',',') for i in formattedFaculty]))
 
     cell += f"Profs: *{faculty}*\n"
 
