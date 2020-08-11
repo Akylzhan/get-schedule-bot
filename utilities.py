@@ -150,8 +150,8 @@ def formattedSchedule(courseId, termId):
     if percentage >= 0.99:
       enrEmoji = "🔴"
 
-    cell += f"Enr:{enrEmoji}*{str(j['ENR'])}/{str(j['CAPACITY'])}*\n"
-    cell += f"Room:{j['ROOM']}\n"
+    cell += f"Enr: {enrEmoji}*{str(j['ENR'])}/{str(j['CAPACITY'])}*\n"
+    cell += f"Room: {j['ROOM']}\n"
     message.append(cell)
 
   for i in range(0, len(message)):

@@ -46,14 +46,14 @@ def start(update, context):
 
 def listOfProfs(update, context):
   try:
+    if len(" ".join(context.args)) < 5:
+      update.message.reply_text(random.choice(messages.smallQueryMsg))
+      return
+
     arg1 = context.args[0]
     arg2 = context.args[0]
     if len(context.args) > 1:
       arg2 = context.args[1]
-
-    if len(arg1) < 3 and len(arg2) < 3:
-      update.message.reply_text(random.choice(messages.smallQueryMsg))
-      return
 
     profs = utilities.searchProf(arg1, arg2)
     if len(profs) == 0:
