@@ -24,7 +24,7 @@ getScheduleHeaders = {
       'Connection': 'close',
       'Upgrade-Insecure-Requests': '1'
   }
-getScheduleUrl = "https://registrar.nu.edu.kz/my-registrar/public-course-catalog/json?method=getSchedule&courseId={}&termId={}"
+getScheduleUrl = "http://178.91.253.115/my-registrar/public-course-catalog/json?method=getSchedule&courseId={}&termId={}"
 
 
 def rateProf(profId, userId, rating):
@@ -114,7 +114,7 @@ def formattedSchedule(courseId, termId):
     cell += f"Times: {j['TIMES']}\n"
 
     faculty = []
-    if '<br>' in faculty:
+    if '<br>' in j['FACULTY']:
       faculty = j['FACULTY'].split('<br>')
     else:
       s = j['FACULTY'].split()

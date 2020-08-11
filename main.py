@@ -74,7 +74,7 @@ def listOfProfs(update, context):
   except:
     print(' '.join(context.args) + " ERROR in listOfProfs")
 
-
+@run_async
 def getCourseName(update, context):
   print(update.message.text)
   try:
@@ -188,7 +188,7 @@ def error():
 
 
 def main():
-  updater = Updater(TOKEN, use_context=True)
+  updater = Updater(TOKEN, use_context=True, workers=16)
   dp = updater.dispatcher
 
   dp.add_handler(CommandHandler("start", start))
