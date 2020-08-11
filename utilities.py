@@ -125,11 +125,12 @@ def formattedSchedule(courseId, termId):
       name, profId = getProfId(faculty[i])
 
       rating = 0
+      count_ratings = 0
       if profId in profRatingSet:
-        rating = profRatingSet[profId]
+        rating, count_ratings = profRatingSet[profId]
       else:
         rating, count_ratings = showRatingOfProf(profId)
-        profRatingSet[profId] = rating
+        profRatingSet[profId] = [rating,count_ratings]
 
       if rating > 0:
         faculty[i] = f'{name} ({str(rating)}/5.0# {str(count_ratings)} rated)'
