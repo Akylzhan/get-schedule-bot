@@ -85,6 +85,6 @@ class Database:
       r = r.split()
       if r:
         s += int(r[1])
-    return s / (len(ratings) - 1)
+    return round(s / (len(ratings) - 1), 2)
 
 # update bot_table set ratings = null where prof_id = '8703';
