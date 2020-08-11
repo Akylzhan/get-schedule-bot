@@ -132,7 +132,7 @@ def formattedSchedule(courseId, termId):
         profRatingSet[profId] = rating
 
       if rating > 0:
-        faculty[i] = f'{name} ({str(rating)}/5.0# {count_ratings} rated)'
+        faculty[i] = f'{name} ({str(rating)}/5.0# {str(count_ratings)} rated)'
     faculty = ', '.join(set([i.replace(',','').replace('#',',') for i in faculty]))
 
     cell += f"Profs: *{faculty}*\n"
@@ -150,6 +150,7 @@ def formattedSchedule(courseId, termId):
       enrEmoji = "🔴"
 
     cell += f"Enr:{enrEmoji}*{str(j['ENR'])}/{str(j['CAPACITY'])}*\n"
+    # TODO: return this and fix long msg
     # cell += f"Room:{j['ROOM']}\n"
     message += cell
 
