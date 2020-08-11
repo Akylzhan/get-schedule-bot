@@ -102,16 +102,16 @@ def formattedCourseInfo(course, termId):
 
 
 def formattedSchedule(courseId, termId):
-  message = ""
+  message = []
   schedule = getSchedule(courseId, termId)
   if schedule == -1:
     return -1
   profRatingSet = {}
   for j in schedule:
     cell = "\n"
-    cell += f"*{j['ST']}*\n"
-    cell += f"{j['DAYS']}\n"
-    cell += f"{j['TIMES']}\n"
+    cell += f"Type: *{j['ST']}*\n"
+    cell += f"Days: {j['DAYS']}\n"
+    cell += f"Times: {j['TIMES']}\n"
 
     faculty = []
     if '<br>' in j['FACULTY']:
@@ -133,7 +133,7 @@ def formattedSchedule(courseId, termId):
         profRatingSet[profId] = [rating,count_ratings]
 
       if rating > 0:
-        faculty[i] = f'{name} ({str(rating)}/5.0# {str(count_ratings)} rated)'
+        faculty[i] = f'{name} ({str(rating)}/5.0# {str(count_ratings)} people rated)'
     faculty = ', '.join(set([i.replace(',','').replace('#',',') for i in faculty]))
 
     cell += f"Profs: *{faculty}*\n"
@@ -151,12 +151,12 @@ def formattedSchedule(courseId, termId):
       enrEmoji = "🔴"
 
     cell += f"Enr:{enrEmoji}*{str(j['ENR'])}/{str(j['CAPACITY'])}*\n"
-    # TODO: return this and fix long msg
-    # cell += f"Room:{j['ROOM']}\n"
-    message += cell
+    cell += f"Room:{j['ROOM']}\n"
+    message.append(cell)
 
-  for c in replaceMD:
-    message = message.replace(c, "\\" + c)
+  for i in range(0, len(message)):
+    for c in replaceMD:
+      message[i] = message[i].replace(c, "\\" + c)
   return message
 
 

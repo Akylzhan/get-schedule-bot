@@ -76,8 +76,8 @@ def listOfProfs(update, context):
 
 @run_async
 def getCourseName(update, context):
-  print(update.message.text)
   try:
+    print(update.message.text)
     query = update.message.text.lower()
     if len(query) < 3:
       update.message.reply_text(random.choice(messages.smallQueryMsg))
@@ -144,8 +144,18 @@ def sendSchedule(update, context):
 
     for c in utilities.replaceMD:
       title = title.replace(c, '\\'+c)
-    formattedSchedule = f'*{title}*\n{formattedSchedule}'
-    query.edit_message_text(text=formattedSchedule, parse_mode=ParseMode.MARKDOWN_V2)
+
+    first_part = formattedSchedule[:25]
+    second_part = formattedSchedule[25:]
+
+    if len(second_part) > 0:
+      first_part = f'*{title}*\nFIRST PART OF SCHEDULE\n{"".join(first_part)}'
+      second_part = f'*{title}*\nSECOND PART OF SCHEDULE\n{"".join(second_part)}'
+      query.edit_message_text(text=first_part, parse_mode=ParseMode.MARKDOWN_V2)
+      context.bot.send_message(chat_id=update.effective_message.chat_id, text=second_part, parse_mode=ParseMode.MARKDOWN_V2)
+    else:
+      first_part = f'*{title}*\n{"".join(first_part)}'
+      query.edit_message_text(text=first_part, parse_mode=ParseMode.MARKDOWN_V2)
   except:
     context.bot.send_message(chat_id=384134675, text=courseList[int(query.data[1:])]['ABBR']+" ERROR in sendSchedule")
 
