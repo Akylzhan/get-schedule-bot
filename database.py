@@ -14,8 +14,6 @@ class Database:
       self.connection = psycopg2.connect(DATABASE_URL, sslmode='require')
 
     self.tableName = table
-    # TODO: copy instructors to utilities.py
-    # but change it to table 'NameSurname': ID
     self.cursor = self.connection.cursor()
     instructors = open('data/instructors.json', 'r').read()
     self.instructors = eval(instructors)

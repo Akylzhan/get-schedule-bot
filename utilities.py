@@ -108,6 +108,7 @@ def formattedSchedule(courseId, termId):
     return -1
   profRatingSet = {}
   for j in schedule:
+    profIdSet = []
     cell = "\n"
     cell += f"Type: *{j['ST']}*\n"
     cell += f"Days: {j['DAYS']}\n"
@@ -123,6 +124,9 @@ def formattedSchedule(courseId, termId):
     for i in range(0, len(faculty)):
       # all combinations
       name, profId = getProfId(faculty[i])
+      # if profId in profIdSet:
+      #   continue
+      # profIdSet.append(profId)
 
       rating = 0
       count_ratings = 0

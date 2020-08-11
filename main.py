@@ -43,7 +43,10 @@ def start(update, context):
   except:
     print("ERROR in START")
 
-
+# TODO
+# change this to call external function to do this entirely
+# just to write `rate name` and also `/rate name`
+# check line 88
 def listOfProfs(update, context):
   try:
     if len(" ".join(context.args)) < 5:
@@ -126,7 +129,7 @@ def sendCourseInfo(update, context):
 
 
 def sendSchedule(update, context):
-  try:
+  # try:
     query = update.callback_query
     query.answer()
     coursePos = int(query.data[1:])
@@ -159,8 +162,8 @@ def sendSchedule(update, context):
     else:
       first_part = f'*{title}*\n{"".join(first_part)}'
       query.edit_message_text(text=first_part, parse_mode=ParseMode.MARKDOWN_V2)
-  except:
-    context.bot.send_message(chat_id=384134675, text=courseList[int(query.data[1:])]['ABBR']+" ERROR in sendSchedule")
+  # except:
+  #   context.bot.send_message(chat_id=384134675, text=courseList[int(query.data[1:])]['ABBR']+" ERROR in sendSchedule")
 
 
 def rateProf(update, context):
