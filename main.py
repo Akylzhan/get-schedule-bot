@@ -123,7 +123,7 @@ def sendCourseInfo(update, context):
 
 
 def sendSchedule(update, context):
-  # try:
+  try:
     query = update.callback_query
     query.answer()
     coursePos = int(query.data[1:])
@@ -146,8 +146,8 @@ def sendSchedule(update, context):
       title = title.replace(c, '\\'+c)
     formattedSchedule = f'*{title}*\n{formattedSchedule}'
     query.edit_message_text(text=formattedSchedule, parse_mode=ParseMode.MARKDOWN_V2)
-  # except:
-  #   context.bot.send_message(chat_id=384134675, text=courseList[int(query.data[1:])]['ABBR']+" ERROR in sendSchedule")
+  except:
+    context.bot.send_message(chat_id=384134675, text=courseList[int(query.data[1:])]['ABBR']+" ERROR in sendSchedule")
 
 
 def rateProf(update, context):
