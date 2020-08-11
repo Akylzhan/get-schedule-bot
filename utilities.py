@@ -110,8 +110,8 @@ def formattedSchedule(courseId, termId):
   for j in schedule:
     cell = "\n"
     cell += f"*{j['ST']}*\n"
-    cell += f"Days: {j['DAYS']}\n"
-    cell += f"Times: {j['TIMES']}\n"
+    cell += f"{j['DAYS']}\n"
+    cell += f"{j['TIMES']}\n"
 
     faculty = []
     if '<br>' in j['FACULTY']:
@@ -149,8 +149,8 @@ def formattedSchedule(courseId, termId):
     if percentage >= 0.99:
       enrEmoji = "🔴"
 
-    cell += f"Enrolled: {enrEmoji}*{str(j['ENR'])}/{str(j['CAPACITY'])}*\n"
-    cell += f"Room: {j['ROOM']}\n"
+    cell += f"Enr:{enrEmoji}*{str(j['ENR'])}/{str(j['CAPACITY'])}*\n"
+    # cell += f"Room:{j['ROOM']}\n"
     message += cell
 
   for c in replaceMD:
