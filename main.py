@@ -70,7 +70,7 @@ def listOfProfs(update, context):
     update.message.reply_text('Please choose:', reply_markup=replyMarkup, parse_mode=ParseMode.MARKDOWN_V2)
 
   except (IndexError):
-    update.message.reply_text("Usage: '/rate ProfName ProfSurname' or '/rate ProfName'")
+    update.message.reply_text("Usage: \n/rate ProfName ProfSurname\nor\n/rate ProfName")
   except:
     print(' '.join(context.args) + " ERROR in listOfProfs")
 
@@ -78,12 +78,15 @@ def listOfProfs(update, context):
 def getCourseName(update, context):
   try:
     print(update.message.text)
-    query = update.message.text.lower()
-    if len(query) < 3:
+    data = update.message.text.lower()
+    if len(data) < 3:
       update.message.reply_text(random.choice(messages.smallQueryMsg))
       return
+    if data.split()[0] == 'rate':
+      update.message.reply_text("Usage: \n/rate ProfName ProfSurname\nor\n/rate ProfName")
+      return
 
-    searchResult = utilities.getSearchData(courseList, query)
+    searchResult = utilities.getSearchData(courseList, data)
 
     if searchResult == -1:
       update.message.reply_text(random.choice(messages.emptyCourseListMsg))
