@@ -261,6 +261,9 @@ def main():
   dp.add_handler(CallbackQueryHandler(sendCourseInfo, pattern="^i"))
   dp.add_handler(CallbackQueryHandler(sendSchedule, pattern="^s"))
   dp.add_handler(CallbackQueryHandler(sendRatingProf, pattern="^rating"))
+   # ratebutton should come before rateProf button;
+   # since regex engine finds ^rate
+   # faster than ^ratebutton
   dp.add_handler(CallbackQueryHandler(ratebutton, pattern="^ratebutton"))
   dp.add_handler(CallbackQueryHandler(rateProf, pattern="^rate"))
   dp.add_error_handler(error)
