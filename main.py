@@ -26,10 +26,6 @@ for course in courseList:
   for key in course:
     course[key] = " ".join(course[key].strip().split())
 
-nufypCourses = [
-  'FEAP 001', 'FBIO 011', 'FBUS 011', 'FCHM 011',
-  'FGEO 011', 'FHUM 011', 'FPHY 011', 'FMATH 001'
-]
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
@@ -167,10 +163,6 @@ def sendSchedule(update, context):
     coursePos = int(query.data[1:])
     abbr = courseList[coursePos]['ABBR']
 
-    if abbr in nufypCourses:
-      context.bot.send_message(chat_id=update.effective_message.chat_id, text=messages.longScheduleMsg)
-      return
-
     courseId = courseList[coursePos]['COURSEID']
     title = abbr + " " + courseList[coursePos]['TITLE']
 
@@ -184,13 +176,17 @@ def sendSchedule(update, context):
       title = title.replace(c, '\\'+c)
 
     first_part = formattedSchedule[:25]
-    second_part = formattedSchedule[25:]
+    second_part = formattedSchedule[25:50]
+    third_part = formattedSchedule[50:]
 
     if len(second_part) > 0:
       first_part = f'*{title}*\nFIRST PART OF SCHEDULE\n{"".join(first_part)}'
       second_part = f'*{title}*\nSECOND PART OF SCHEDULE\n{"".join(second_part)}'
       query.edit_message_text(text=first_part, parse_mode=ParseMode.MARKDOWN_V2)
       context.bot.send_message(chat_id=update.effective_message.chat_id, text=second_part, parse_mode=ParseMode.MARKDOWN_V2)
+      if len(third_part) > 0:
+        third_part = f'*{title}*\nTHIRD PART OF SCHEDULE\n{"".join(third_part)}'
+        context.bot.send_message(chat_id=update.effective_message.chat_id, text=third_part, parse_mode=ParseMode.MARKDOWN_V2)
     else:
       first_part = f'*{title}*\n{"".join(first_part)}'
       query.edit_message_text(text=first_part, parse_mode=ParseMode.MARKDOWN_V2)
