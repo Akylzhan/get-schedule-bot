@@ -15,27 +15,59 @@ class Database:
 
     self.tableName = table
     self.cursor = self.connection.cursor()
+    
     instructors = open('data/instructors.json', 'r').read()
     self.instructors = eval(instructors)
+
+    courseIds = open('data/courseList.json', 'r').read()
+    courseIds = eval(courseIds)['data']
+    self.courseIds = []
+    for i in courseIds:
+      self.courseIds.append(i['COURSEID'])
+
     self.createTable()
 
 
   def createTable(self):
-    createTableQuery = """CREATE TABLE
+    createRatingsTableQuery = """CREATE TABLE
                           IF NOT EXISTS bot_table
                           (prof_id TEXT UNIQUE,
-                          ratings TEXT)
-                       """
-    insertRowQuery = """INSERT INTO
+                          ratings TEXT)"""
+    createLinksTableQuery = """CREATE TABLE
+                          IF NOT EXISTS links_list
+                          (course_id TEXT UNIQUE,
+                          links TEXT)"""
+    insertRatingsRowQuery = """INSERT INTO
                      bot_table(prof_id) VALUES(%s)
-                     ON CONFLICT (prof_id) DO NOTHING
+                     ON CONFLICT (prof_id) DO NOTHING"""
+    insertLinksRowQuery = """INSERT INTO
+                     links_list(course_id) VALUES(%s)
+                     ON CONFLICT (course_id) DO NOTHING
                      """
-    self.cursor.execute(createTableQuery)
+    self.cursor.execute(createRatingsTableQuery)
+    self.cursor.execute(createLinksTableQuery)
 
     for i in self.instructors:
       values = (i['ID'],)
-      self.cursor.execute(insertRowQuery, values)
+      self.cursor.execute(insertRatingsRowQuery, values)
+    for i in self.courseIds:
+      values = (i,)
+      self.cursor.execute(insertLinksRowQuery, values)
     self.connection.commit()
+
+
+  def addLink(self, id, section, link):
+    insertQuery = """UPDATE links_list SET links = '{}' WHERE course_id = '{}'"""
+    oldList = self.listOfLinks(id)
+    if oldList is None:
+      self.cursor.execute(insertQuery.format(f'{section} {link},', id))
+    # TODO
+
+
+  def listOfLinks(self, id):
+    getLinksQuery = """SELECT links FROM links_list WHERE course_id = '{}'"""
+    self.cursor.execute(getLinksQuery.format(id))
+    return self.cursor.fetchone()[0]
 
 
   def rate(self, profId, userId, rating):
