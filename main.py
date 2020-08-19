@@ -14,10 +14,10 @@ import messages
 
 
 DEBUG = os.environ.get('PROD') is None
-TOKEN = "949738996:AAHVrnVCsv4LUP0y-0FNPS_dCs2lCVhcQ08"
+TOKEN = os.environ.get('BOT_TOKEN')
 
 if DEBUG:
-  TOKEN = "1201714568:AAHLzZRyHaW3jGXawZJP2-VD8Wr_tMJXa2E"
+  TOKEN = open('debug_token.txt', 'r').read()
 
 # manually change termId in getInfo.sh
 termId = int(eval(open("data/semesters.json", 'r').read())[0]['ID'])
