@@ -8,7 +8,7 @@ smallQueryMsg = [
   "I find your lack of characters in the query disturbing",
   "honey, this is not how it works: use longer queries",
   "hmm… your query doesn’t look good",
-  "where’s normal query, lebowski?"
+  "where’s the normal query, lebowski?"
 ]
 
 emptyCourseListMsg = [
