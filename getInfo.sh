@@ -11,7 +11,7 @@ curl -L --output data/courseList.gz 'https://registrar.nu.edu.kz/my-registrar/pu
 -H 'Connection: keep-alive' \
 -H 'Referer: https://registrar.nu.edu.kz/course-catalog' \
 -H 'X-Requested-With: XMLHttpRequest' \
---data 'method=getSearchData&searchParams%5BformSimple%5D=false&searchParams%5Blimit%5D=1000&searchParams%5Bpage%5D=1&searchParams%5Bstart%5D=0&searchParams%5BquickSearch%5D=&searchParams%5BsortField%5D=-1&searchParams%5BsortDescending%5D=-1&searchParams%5Bsemester%5D=521&searchParams%5Bschools%5D=&searchParams%5Bdepartments%5D=&searchParams%5Blevels%5D=&searchParams%5Bsubjects%5D=&searchParams%5Binstructors%5D=&searchParams%5Bbreadths%5D=&searchParams%5BabbrNum%5D=&searchParams%5Bcredit%5D='
+--data 'method=getSearchData&searchParams%5BformSimple%5D=false&searchParams%5Blimit%5D=1000&searchParams%5Bpage%5D=1&searchParams%5Bstart%5D=0&searchParams%5BquickSearch%5D=&searchParams%5BsortField%5D=-1&searchParams%5BsortDescending%5D=-1&searchParams%5Bsemester%5D=541&searchParams%5Bschools%5D=&searchParams%5Bdepartments%5D=&searchParams%5Blevels%5D=&searchParams%5Bsubjects%5D=&searchParams%5Binstructors%5D=&searchParams%5Bbreadths%5D=&searchParams%5BabbrNum%5D=&searchParams%5Bcredit%5D='
 
 gunzip -c data/courseList.gz > data/courseList.json
 rm data/courseList.gz
