@@ -9,7 +9,7 @@ from telegram.ext import CallbackQueryHandler, ConversationHandler
 from telegram.ext.dispatcher import run_async
 from telegram import ParseMode, InlineKeyboardButton, InlineKeyboardMarkup
 
-import utilities
+from utilities import helpers
 import messages
 
 
@@ -37,6 +37,8 @@ def start(update, context):
   try:
     update.message.reply_text(messages.startMsg)
   except:
+    if DEBUG:
+      raise
     print("ERROR in START")
 
 # TODO
@@ -54,16 +56,16 @@ def listOfProfs(update, context):
     if len(context.args) > 1:
       arg2 = context.args[1]
 
-    profs = utilities.searchProf(arg1, arg2)
+    profs = helpers.searchProf(arg1, arg2)
     if len(profs) == 0:
       update.message.reply_text("Could not find this prof")
       return
 
     keyboard = []
     for prof in profs:
-      name = prof['NAME']
-      id = prof['ID']
-      keyboard.append([InlineKeyboardButton(name, callback_data="rate"+name+";"+id)])
+      profName = prof['NAME']
+      profId = prof['ID']
+      keyboard.append([InlineKeyboardButton(profName, callback_data="rate"+profName+";"+profId)])
 
     replyMarkup = InlineKeyboardMarkup(keyboard)
     update.message.reply_text('Please choose:', reply_markup=replyMarkup, parse_mode=ParseMode.MARKDOWN_V2)
@@ -71,6 +73,8 @@ def listOfProfs(update, context):
   except (IndexError):
     update.message.reply_text("Usage: \n/rate ProfName ProfSurname\nor\n/rate ProfName")
   except:
+    if DEBUG:
+      raise
     print(' '.join(context.args) + " ERROR in listOfProfs")
 
 @run_async
@@ -85,23 +89,27 @@ def listOfProfRatings(update, context):
     if len(context.args) > 1:
       arg2 = context.args[1]
 
-    profs = utilities.searchProf(arg1, arg2)
+    profs = helpers.searchProf(arg1, arg2)
     if len(profs) == 0:
       update.message.reply_text("Could not find this prof")
       return
 
     keyboard = []
     for prof in profs:
-      name = prof['NAME']
-      id = prof['ID']
-      keyboard.append([InlineKeyboardButton(name, callback_data="rating"+name+";"+id)])
+      profName = prof['NAME']
+      profId = prof['ID']
+      keyboard.append([InlineKeyboardButton(profName, callback_data="rating"+profName+";"+profId)])
 
     replyMarkup = InlineKeyboardMarkup(keyboard)
     update.message.reply_text('Please choose:', reply_markup=replyMarkup, parse_mode=ParseMode.MARKDOWN_V2)
 
   except (IndexError):
+    if DEBUG:
+      raise
     update.message.reply_text("Usage: \n/rating ProfName ProfSurname\nor\n/rating ProfName")
   except:
+    if DEBUG:
+      raise
     print(' '.join(context.args) + " ERROR in listOfProfRatings")
 
 
@@ -117,7 +125,7 @@ def getCourseName(update, context):
       update.message.reply_text("Usage: \n/rate ProfName ProfSurname\nor\n/rate ProfName")
       return
 
-    searchResult = utilities.getSearchData(courseList, data)
+    searchResult = helpers.getSearchData(courseList, data)
 
     if searchResult == -1:
       update.message.reply_text(random.choice(messages.emptyCourseListMsg))
@@ -139,6 +147,8 @@ def getCourseName(update, context):
     replyMarkup = InlineKeyboardMarkup(keyboard)
     update.message.reply_text('Please choose:', reply_markup=replyMarkup, parse_mode=ParseMode.MARKDOWN_V2)
   except:
+    if DEBUG:
+      raise
     context.bot.send_message(chat_id=384134675, text=update.message.text)
 
 
@@ -147,12 +157,14 @@ def sendCourseInfo(update, context):
     query = update.callback_query
     query.answer()
     coursePos = int(query.data[1:])
-    formattedInfo = utilities.formattedCourseInfo(courseList[coursePos], termId)
+    formattedInfo = helpers.formattedCourseInfo(courseList[coursePos], termId)
 
     keyboard = [[InlineKeyboardButton("Schedule", callback_data="s"+str(coursePos))]]
     replyMarkup = InlineKeyboardMarkup(keyboard)
     query.edit_message_text(text=formattedInfo, reply_markup=replyMarkup, parse_mode=ParseMode.MARKDOWN_V2)
   except:
+    if DEBUG:
+      raise
     context.bot.send_message(chat_id=384134675, text=courseList[int(query.data[1:])]['ABBR']+" ERROR in sendCourseInfo")
 
 
@@ -166,14 +178,13 @@ def sendSchedule(update, context):
     courseId = courseList[coursePos]['COURSEID']
     title = abbr + " " + courseList[coursePos]['TITLE']
 
-    formattedSchedule = utilities.formattedSchedule(courseId, termId)
+    formattedSchedule = helpers.formattedSchedule(courseId, termId)
     if formattedSchedule == -1:
       query.edit_message_text(text="cannot find schedule or it is too long :(")
       context.bot.send_message(chat_id=384134675, text="ERROR in formattedSchedule")
       return
 
-    for c in utilities.replaceMD:
-      title = title.replace(c, '\\'+c)
+    title = helpers.replaceMardownReservedChars(title)
 
     first_part = formattedSchedule[:25]
     second_part = formattedSchedule[25:50]
@@ -182,28 +193,41 @@ def sendSchedule(update, context):
     if len(second_part) > 0:
       first_part = f'*{title}*\nFIRST PART OF SCHEDULE\n{"".join(first_part)}'
       second_part = f'*{title}*\nSECOND PART OF SCHEDULE\n{"".join(second_part)}'
+
       query.edit_message_text(text=first_part, parse_mode=ParseMode.MARKDOWN_V2)
-      context.bot.send_message(chat_id=update.effective_message.chat_id, text=second_part, parse_mode=ParseMode.MARKDOWN_V2)
+
+      context.bot.send_message(chat_id=update.effective_message.chat_id,
+                               text=second_part,
+                               parse_mode=ParseMode.MARKDOWN_V2)
+
       if len(third_part) > 0:
         third_part = f'*{title}*\nTHIRD PART OF SCHEDULE\n{"".join(third_part)}'
-        context.bot.send_message(chat_id=update.effective_message.chat_id, text=third_part, parse_mode=ParseMode.MARKDOWN_V2)
+
+        context.bot.send_message(chat_id=update.effective_message.chat_id,
+                                 text=third_part,
+                                 parse_mode=ParseMode.MARKDOWN_V2)
     else:
       first_part = f'*{title}*\n{"".join(first_part)}'
       query.edit_message_text(text=first_part, parse_mode=ParseMode.MARKDOWN_V2)
+
   except:
-    context.bot.send_message(chat_id=384134675, text=courseList[int(query.data[1:])]['ABBR']+" ERROR in sendSchedule")
+    if DEBUG:
+      raise
+    context.bot.send_message(chat_id=384134675,
+                             text=courseList[int(query.data[1:])]['ABBR']+" ERROR in sendSchedule")
 
 
 def sendRatingProf(update, context):
   query = update.callback_query
   query.answer()
   data = query.data[6:].split(';')
-  name = data[0]
-  id = data[1]
-  rating, count_ratings = utilities.showRatingOfProf(id)
-  msg = f'Rating of:\n*{name}* - {rating}/5.0 ({count_ratings} people rated)'
-  for c in utilities.replaceMD:
-    msg = msg.replace(c, '\\' + c)
+
+  profName, profId = data
+  profRating, countRatings = helpers.showRatingOfProf(profId)
+
+  msg = f'Rating of:\n*{profName}* - {profRating}/5.0 ({countRatings} people rated)'
+  msg = helpers.replaceMardownReservedChars(msg)
+
   query.edit_message_text(text=msg,
                           parse_mode=ParseMode.MARKDOWN_V2)
 
@@ -211,35 +235,39 @@ def rateProf(update, context):
   query = update.callback_query
   query.answer()
   data = query.data[4:].split(';')
-  name = data[0]
-  id = data[1]
+
+  profName, profId = data
   keyboard = [
-    [InlineKeyboardButton('1 star', callback_data="ratebutton"+name+";"+id+';1')],
-    [InlineKeyboardButton('2 star', callback_data="ratebutton"+name+";"+id+';2')],
-    [InlineKeyboardButton('3 star', callback_data="ratebutton"+name+";"+id+';3')],
-    [InlineKeyboardButton('4 star', callback_data="ratebutton"+name+";"+id+';4')],
-    [InlineKeyboardButton('5 star', callback_data="ratebutton"+name+";"+id+';5')]
+    [InlineKeyboardButton('1 star', callback_data="ratebutton"+profName+";"+profId+';1')],
+    [InlineKeyboardButton('2 star', callback_data="ratebutton"+profName+";"+profId+';2')],
+    [InlineKeyboardButton('3 star', callback_data="ratebutton"+profName+";"+profId+';3')],
+    [InlineKeyboardButton('4 star', callback_data="ratebutton"+profName+";"+profId+';4')],
+    [InlineKeyboardButton('5 star', callback_data="ratebutton"+profName+";"+profId+';5')]
   ]
-  for c in utilities.replaceMD:
-    name = name.replace(c, '\\' + c)
+
+  profName = helpers.replaceMardownReservedChars(profName)
+
   replyMarkup = InlineKeyboardMarkup(keyboard)
-  query.edit_message_text(text=f'Please rate *{name}*:', reply_markup=replyMarkup, parse_mode=ParseMode.MARKDOWN_V2)
+  query.edit_message_text(text=f'Please rate *{profName}*:',
+                          reply_markup=replyMarkup,
+                          parse_mode=ParseMode.MARKDOWN_V2)
 
 
 def ratebutton(update, context):
   query = update.callback_query
-  data = query.data[10:].split(';')
-  name = data[0]
-  id = data[1]
-  rating = data[2]
 
-  rating, count_ratings = utilities.rateProf(id, str(update.effective_message.chat_id), rating)
-  rating = str(rating)
-  count_ratings = str(int(count_ratings))
-  for c in utilities.replaceMD:
-      rating = rating.replace(c, '\\' + c)
-      name = name.replace(c, '\\' + c)
-  query.edit_message_text(text=f'Thanks for rating *{name}*\nCurrent rating: {rating} \\({count_ratings} people rated\\)', parse_mode=ParseMode.MARKDOWN_V2)
+  userId = str(update.effective_message.chat_id)
+
+  data = query.data[10:].split(';')
+  profName, profId, profRating = data
+
+  profRating, countRatings = helpers.rateProf(profId, userId, profRating)
+
+  profRating = helpers.replaceMardownReservedChars(profRating)
+  profName = helpers.replaceMardownReservedChars(profName)
+
+  query.edit_message_text(text=f"Thanks for rating *{profName}*\nCurrent rating: {profRating} \\({countRatings} people rated\\)",
+                          parse_mode=ParseMode.MARKDOWN_V2)
 
 
 def error():
@@ -269,8 +297,8 @@ def main():
   else:
     PORT = int(os.environ.get('PORT', '8443'))
     updater.start_webhook(listen="0.0.0.0",
-                        port=PORT,
-                        url_path=TOKEN)
+                          port=PORT,
+                          url_path=TOKEN)
     updater.bot.set_webhook("https://schedule-bot-akylzhan.herokuapp.com/" + TOKEN)
 
   updater.idle()

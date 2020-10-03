@@ -2,8 +2,16 @@ import os
 import requests as req
 import time
 
-from database import Database
+from . database import Database
+
+
 replaceMD = ['`', '(', ')', '+', '-', '.', '!']
+
+def replaceMardownReservedChars(arg):
+  for c in replaceMD:
+    arg = arg.replace(c, '\\' + c)
+  return arg
+
 
 db = Database()
 
@@ -96,9 +104,39 @@ def formattedCourseInfo(course, termId):
   message += f"Antireqs: {course['ANTIREQ']}\n"
   message += f"Description: {course['SHORTDESC']}\n"
 
-  for c in replaceMD:
-    message = message.replace(c, "\\" + c)
-  return message
+  return replaceMardownReservedChars(message)
+
+
+def formatFaculty(facultyList):
+  faculty = []
+
+  if '<br>' in facultyList:
+    faculty = facultyList.split('<br>')
+  else:
+    s = facultyList.split()
+    faculty.append(' '.join(s[:2]))
+    faculty.append(' '.join(s[-2:]))
+
+  formattedFaculty = []
+  for i in range(0, len(faculty)):
+    # all combinations
+    profName, profId = getProfId(faculty[i])
+
+    profRating, countRatings = 0, 0
+    # check if we calculated prof rating before
+    if profId in profRatingSet:
+      profRating, countRatings = profRatingSet[profId]
+    else:
+      profRating, countRatings = showRatingOfProf(profId)
+      profRatingSet[profId] = [profRating,countRatings]
+
+    if rating > 0:
+      formattedFaculty.append(f'{profName} ({profRating}/5.0 - {countRatings} people rated)')
+    else:
+      formattedFaculty.append(faculty[i])
+  faculty = ', '.join(set([i.replace(',','') for i in formattedFaculty]))
+
+  return faculty
 
 
 def formattedSchedule(courseId, termId):
@@ -107,47 +145,17 @@ def formattedSchedule(courseId, termId):
   if schedule == -1:
     return -1
   profRatingSet = {}
-  for j in schedule:
-    profIdSet = []
+
+  for course in schedule:
     cell = "\n"
-    cell += f"Type: *{j['ST']}*\n"
-    cell += f"Days: {j['DAYS']}\n"
-    cell += f"Times: {j['TIMES']}\n"
-
-    faculty = []
-    if '<br>' in j['FACULTY']:
-      faculty = j['FACULTY'].split('<br>')
-    else:
-      s = j['FACULTY'].split()
-      faculty.append(' '.join(s[:2]))
-      faculty.append(' '.join(s[-2:]))
-    formattedFaculty = []
-    for i in range(0, len(faculty)):
-      # all combinations
-      name, profId = getProfId(faculty[i])
-      if profId in profIdSet:
-        continue
-      profIdSet.append(profId)
-
-      rating = 0
-      count_ratings = 0
-      if profId in profRatingSet:
-        rating, count_ratings = profRatingSet[profId]
-      else:
-        rating, count_ratings = showRatingOfProf(profId)
-        profRatingSet[profId] = [rating,count_ratings]
-
-      if rating > 0:
-        formattedFaculty.append(f'{name} ({str(rating)}/5.0# {str(count_ratings)} people rated)')
-      else:
-        formattedFaculty.append(faculty[i])
-    faculty = ', '.join(set([i.replace(',','').replace('#',',') for i in formattedFaculty]))
-
-    cell += f"Profs: *{faculty}*\n"
+    cell += f"Type: *{course['ST']}*\n"
+    cell += f"Days: {course['DAYS']}\n"
+    cell += f"Times: {course['TIMES']}\n"
+    cell += f"Profs: *{formatFaculty(course['FACULTY'])}*\n"
 
     percentage = 0
-    if int(j['CAPACITY']) > 0:
-      percentage = int(j['ENR']) / int(j['CAPACITY'])
+    if int(course['CAPACITY']) > 0:
+      percentage = int(course['ENR']) / int(course['CAPACITY'])
 
     enrEmoji = "🟢"
     if percentage >= 0.49:
@@ -157,13 +165,12 @@ def formattedSchedule(courseId, termId):
     if percentage >= 0.99:
       enrEmoji = "🔴"
 
-    cell += f"Enr: {enrEmoji}*{str(j['ENR'])}/{str(j['CAPACITY'])}*\n"
-    cell += f"Room: {j['ROOM']}\n"
+    cell += f"Enr: {enrEmoji}*{str(course['ENR'])}/{str(course['CAPACITY'])}*\n"
+    cell += f"Room: {course['ROOM']}\n"
     message.append(cell)
 
   for i in range(0, len(message)):
-    for c in replaceMD:
-      message[i] = message[i].replace(c, "\\" + c)
+    message[i] = replaceMardownReservedChars(message[i])
   return message
 
 
@@ -173,5 +180,6 @@ def getSchedule(courseId, termId):
     if len(courseSchedule) > 2:
       courseSchedule = eval(courseSchedule.replace('false', 'False'))
       return courseSchedule
+    return -1
   except:
     return -1
