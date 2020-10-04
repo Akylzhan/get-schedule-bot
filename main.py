@@ -51,12 +51,7 @@ def listOfProfs(update, context):
       update.message.reply_text(random.choice(messages.smallQueryMsg))
       return
 
-    arg1 = context.args[0]
-    arg2 = context.args[0]
-    if len(context.args) > 1:
-      arg2 = context.args[1]
-
-    profs = helpers.searchProf(arg1, arg2)
+    profs = helpers.searchProf(context.args)
     if len(profs) == 0:
       update.message.reply_text("Could not find this prof")
       return
@@ -157,7 +152,7 @@ def sendCourseInfo(update, context):
     query = update.callback_query
     query.answer()
     coursePos = int(query.data[1:])
-    formattedInfo = helpers.formattedCourseInfo(courseList[coursePos], termId)
+    formattedInfo = helpers.getCourseInfo(courseList[coursePos], termId)
 
     keyboard = [[InlineKeyboardButton("Schedule", callback_data="s"+str(coursePos))]]
     replyMarkup = InlineKeyboardMarkup(keyboard)
@@ -178,7 +173,7 @@ def sendSchedule(update, context):
     courseId = courseList[coursePos]['COURSEID']
     title = abbr + " " + courseList[coursePos]['TITLE']
 
-    formattedSchedule = helpers.formattedSchedule(courseId, termId)
+    formattedSchedule = helpers.getSchedule(courseId, termId)
     if formattedSchedule == -1:
       query.edit_message_text(text="cannot find schedule or it is too long :(")
       context.bot.send_message(chat_id=384134675, text="ERROR in formattedSchedule")
