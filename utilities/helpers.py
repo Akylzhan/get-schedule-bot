@@ -3,17 +3,11 @@ import requests as req
 import time
 
 from . database import Database
+from . import formatters
 
 
-replaceMD = ['`', '(', ')', '+', '-', '.', '!']
+replaceMardownReservedChars = formatters.replaceMardownReservedChars
 
-def replaceMardownReservedChars(arg):
-  for c in replaceMD:
-    arg = arg.replace(c, '\\' + c)
-  return arg
-
-
-db = Database()
 
 instr = eval(open('data/instructors.json', 'r').read())
 instructors = {}
@@ -21,20 +15,7 @@ for i in instr:
   instructors[i['NAME']] = i['ID']
 
 
-r = req.Session()
-getScheduleHeaders = {
-      'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0',
-      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-      'Accept-Language': 'en-US,en;q=0.5',
-      'Accept-Encoding': 'gzip, deflate',
-      'Referer': 'https://registrar.nu.edu.kz/index.php?q=user/login',
-      'DNT': '1',
-      'Connection': 'close',
-      'Upgrade-Insecure-Requests': '1'
-  }
-getScheduleUrl = "http://178.91.253.115/my-registrar/public-course-catalog/json?method=getSchedule&courseId={}&termId={}"
-
-
+db = Database()
 def rateProf(profId, userId, rating):
   return db.rate(profId, userId, rating)
 
@@ -43,14 +24,17 @@ def showRatingOfProf(profId):
   return db.calculateRating(profId)
 
 
-def searchProf(arg1, arg2):
+def searchProf(args):
+  profName = args[0].lower()
+  profSurname = args[0].lower()
+  if len(args) > 1:
+    profSurname = args[1].lower()
+
   result = []
-  arg1 = arg1.lower()
-  arg2 = arg2.lower()
-  for name in instructors:
-    lower_name = name.lower()
-    if arg1 in lower_name and arg2 in lower_name:
-      result.append({"NAME": name, "ID": instructors[name]})
+  for fullName in instructors:
+    lowerFullName = fullName.lower()
+    if profName in lowerFullName and profSurname in lowerFullName:
+      result.append({"NAME": fullName, "ID": instructors[fullName]})
   return result
 
 
@@ -60,11 +44,11 @@ def getProfId(nameSurname):
 
   if ',' in nameSurname:
     delim = ',' + delim
-  name, surname = nameSurname.split(delim)[:2]
+  profName, profSurname = nameSurname.split(delim)[:2]
 
-  for i in instructors:
-    if name in i and surname in i:
-      return i, instructors[i]
+  for fullName in instructors:
+    if profName in fullName and profSurname in fullName:
+      return fullName, instructors[fullName]
 
 
 def getSearchData(data, query):
@@ -95,91 +79,8 @@ def getSearchData(data, query):
   return -1
 
 
-def formattedCourseInfo(course, termId):
-  message = ""
-  message += f"*{course['ABBR']}* - *{course['TITLE']}*\n"
-  message += f"ECTS: {course['CRECTS']}\n"
-  message += f"Prereqs: {course['PREREQ']}\n"
-  message += f"Coreqs: {course['COREQ']}\n"
-  message += f"Antireqs: {course['ANTIREQ']}\n"
-  message += f"Description: {course['SHORTDESC']}\n"
-
-  return replaceMardownReservedChars(message)
-
-
-def formatFaculty(facultyList):
-  faculty = []
-
-  if '<br>' in facultyList:
-    faculty = facultyList.split('<br>')
-  else:
-    s = facultyList.split()
-    faculty.append(' '.join(s[:2]))
-    faculty.append(' '.join(s[-2:]))
-
-  formattedFaculty = []
-  for i in range(0, len(faculty)):
-    # all combinations
-    profName, profId = getProfId(faculty[i])
-
-    profRating, countRatings = 0, 0
-    # check if we calculated prof rating before
-    if profId in profRatingSet:
-      profRating, countRatings = profRatingSet[profId]
-    else:
-      profRating, countRatings = showRatingOfProf(profId)
-      profRatingSet[profId] = [profRating,countRatings]
-
-    if rating > 0:
-      formattedFaculty.append(f'{profName} ({profRating}/5.0 - {countRatings} people rated)')
-    else:
-      formattedFaculty.append(faculty[i])
-  faculty = ', '.join(set([i.replace(',','') for i in formattedFaculty]))
-
-  return faculty
-
-
-def formattedSchedule(courseId, termId):
-  message = []
-  schedule = getSchedule(courseId, termId)
-  if schedule == -1:
-    return -1
-  profRatingSet = {}
-
-  for course in schedule:
-    cell = "\n"
-    cell += f"Type: *{course['ST']}*\n"
-    cell += f"Days: {course['DAYS']}\n"
-    cell += f"Times: {course['TIMES']}\n"
-    cell += f"Profs: *{formatFaculty(course['FACULTY'])}*\n"
-
-    percentage = 0
-    if int(course['CAPACITY']) > 0:
-      percentage = int(course['ENR']) / int(course['CAPACITY'])
-
-    enrEmoji = "🟢"
-    if percentage >= 0.49:
-      enrEmoji = "🟡"
-    if percentage >= 0.76:
-      enrEmoji = "🟠"
-    if percentage >= 0.99:
-      enrEmoji = "🔴"
-
-    cell += f"Enr: {enrEmoji}*{str(course['ENR'])}/{str(course['CAPACITY'])}*\n"
-    cell += f"Room: {course['ROOM']}\n"
-    message.append(cell)
-
-  for i in range(0, len(message)):
-    message[i] = replaceMardownReservedChars(message[i])
-  return message
-
-
 def getSchedule(courseId, termId):
-  try:
-    courseSchedule = r.post(getScheduleUrl.format(courseId, termId), headers=getScheduleHeaders).text
-    if len(courseSchedule) > 2:
-      courseSchedule = eval(courseSchedule.replace('false', 'False'))
-      return courseSchedule
-    return -1
-  except:
-    return -1
+  return formatters.formatSchedule(courseId, termId)
+
+def getCourseInfo(courseId, termId):
+  return formatters.formatCourseInfo(courseId, termId)
