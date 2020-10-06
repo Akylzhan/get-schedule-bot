@@ -176,7 +176,7 @@ def sendSchedule(update, context):
     formattedSchedule = helpers.getSchedule(courseId, termId)
     if formattedSchedule == -1:
       query.edit_message_text(text="cannot find schedule or it is too long :(")
-      context.bot.send_message(chat_id=384134675, text="ERROR in formattedSchedule")
+      context.bot.send_message(chat_id=384134675, text="ERROR in getSchedule")
       return
 
     title = helpers.replaceMardownReservedChars(title)
