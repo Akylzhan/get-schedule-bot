@@ -1,5 +1,17 @@
 startMsg = "Hello! Send me course name (eg. CSCI 152 or public speaking) and I will send you schedule of this course"
 
+help_msg = 
+"""
+напиши название курса (аббревиатуру или полное название) и я отправлю тебе расписание.
+
+оничан, не пугайся, это всего лишь несколько моих команд:
+/start - запустить меня \U0001F97A
+/help - моя забота о тебе \U0001F49E
+/rating - посмотреть рейтинг профов \U0001F47B
+/rate - оценить профов \U0001F929
+"""
+
+
 smallQueryMsg = [
   "your query is smol",
   "your query is smol like your pp",

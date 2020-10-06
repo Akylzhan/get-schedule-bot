@@ -41,6 +41,15 @@ def start(update, context):
       raise
     print("ERROR in START")
 
+def help_users(update, context):
+  try:
+    update.message.reply_text(messages.help_msg)
+  except:
+    if DEBUG:
+      raise
+    print("ERROR_help")
+
+
 # TODO
 # change this to call external function to do this entirely
 # just to write `rate name` and also `/rate name`
@@ -276,6 +285,7 @@ def main():
   dp.add_handler(CommandHandler("start", start))
   dp.add_handler(CommandHandler("rate", listOfProfs))
   dp.add_handler(CommandHandler("rating", listOfProfRatings))
+  dp.add_handler(CommandHandler("help", help_users))
   dp.add_handler(MessageHandler(Filters.text & ~Filters.command, getCourseName))
   dp.add_handler(CallbackQueryHandler(sendCourseInfo, pattern="^i"))
   dp.add_handler(CallbackQueryHandler(sendSchedule, pattern="^s"))
