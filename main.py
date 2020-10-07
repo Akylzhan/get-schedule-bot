@@ -57,7 +57,7 @@ def help_users(update, context):
 def listOfProfs(update, context):
   try:
     if len(" ".join(context.args)) < 5:
-      update.message.reply_text(random.choice(messages.smallQueryMsg)+"\n Anyway, here is a joke\n"+helpers.getJoke())
+      update.message.reply_text(random.choice(messages.smallQueryMsg)+"\nAnyway, here is a joke\n" + helpers.getJoke())
       return
 
     profs = helpers.searchProf(context.args)
