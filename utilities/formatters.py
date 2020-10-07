@@ -110,3 +110,10 @@ def requestSchedule(courseId, termId):
     return -1
   except:
     return -1
+
+def requestJoke():
+  try:
+    url = "https://sv443.net/jokeapi/v2/joke/Any?blacklistFlags=nsfw,religious,political,racist,sexist&format=txt"
+    return req.get(url).text
+  except:
+    return -1
