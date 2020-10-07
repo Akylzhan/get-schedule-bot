@@ -84,3 +84,6 @@ def getSchedule(courseId, termId):
 
 def getCourseInfo(courseId, termId):
   return formatters.formatCourseInfo(courseId, termId)
+
+def getJoke():
+  return formatters.requestJoke()

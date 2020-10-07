@@ -1,5 +1,5 @@
 from . import helpers
-
+import json
 import requests as req
 r = req.Session()
 getScheduleHeaders = {
@@ -108,5 +108,14 @@ def requestSchedule(courseId, termId):
       courseSchedule = eval(courseSchedule.replace('false', 'False'))
       return courseSchedule
     return -1
+  except:
+    return -1
+
+def requestJoke():
+  try:
+    api_end_point = "https://sv443.net/jokeapi/v2/joke/Any?blacklistFlags=nsfw,religious,political,racist,sexist"
+    joke = req.get(api_end_point)
+    json_data = json.loads(joke.text)
+    return json_data
   except:
     return -1
