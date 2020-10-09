@@ -35,6 +35,7 @@ logger = logging.getLogger(__name__)
 
 def start(update, context):
   try:
+    helpers.addUniqueUser(str(update.effective_message.chat_id))
     update.message.reply_text(messages.startMsg)
   except:
     if DEBUG:
@@ -43,6 +44,7 @@ def start(update, context):
 
 def help_users(update, context):
   try:
+    helpers.addUniqueUser(str(update.effective_message.chat_id))
     update.message.reply_text(messages.help_msg)
   except:
     if DEBUG:
@@ -56,6 +58,8 @@ def help_users(update, context):
 # check line 88
 def listOfProfs(update, context):
   try:
+    helpers.addUniqueUser(str(update.effective_message.chat_id))
+
     if len(" ".join(context.args)) < 5:
       update.message.reply_text(random.choice(messages.smallQueryMsg)+"\nAnyway, here is a joke\n" + helpers.getJoke())
       return
@@ -84,16 +88,13 @@ def listOfProfs(update, context):
 @run_async
 def listOfProfRatings(update, context):
   try:
+    helpers.addUniqueUser(str(update.effective_message.chat_id))
+
     if len(" ".join(context.args)) < 5:
       update.message.reply_text(random.choice(messages.smallQueryMsg))
       return
 
-    arg1 = context.args[0]
-    arg2 = context.args[0]
-    if len(context.args) > 1:
-      arg2 = context.args[1]
-
-    profs = helpers.searchProf(arg1, arg2)
+    profs = helpers.searchProf(context.args)
     if len(profs) == 0:
       update.message.reply_text("Could not find this prof")
       return
@@ -120,6 +121,8 @@ def listOfProfRatings(update, context):
 @run_async
 def getCourseName(update, context):
   try:
+    helpers.addUniqueUser(str(update.effective_message.chat_id))
+
     print(update.message.text)
     data = update.message.text.lower()
     if len(data) < 3:
@@ -184,7 +187,7 @@ def sendSchedule(update, context):
 
     formattedSchedule = helpers.getSchedule(courseId, termId)
     if formattedSchedule == -1:
-      query.edit_message_text(text="cannot find schedule or it is too long :(\nAnyway, here is a joke\n" + helpers.getJoke())
+      query.edit_message_text(text="cannot find schedule or it was not uploaded :(\nAnyway, here is a joke\n" + helpers.getJoke())
       context.bot.send_message(chat_id=384134675, text="ERROR in getSchedule")
       return
 

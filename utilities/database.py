@@ -1,6 +1,8 @@
 import psycopg2
 import os
 
+import datetime
+
 class Database:
   def __init__(self, table="users"):
     DATABASE_URL = os.environ.get('DATABASE_URL')
@@ -13,15 +15,17 @@ class Database:
     else:
       self.connection = psycopg2.connect(DATABASE_URL, sslmode='require')
 
-    self.tableName = table
     self.cursor = self.connection.cursor()
     instructors = open('data/instructors.json', 'r').read()
+    self.currentYear = str(datetime.datetime.now().year)
     self.instructors = eval(instructors)
-    self.createTable()
+
+    self.createBotTable()
+    self.createUsersTable()
 
 
-  def createTable(self):
-    createTableQuery = """CREATE TABLE
+  def createBotTable(self):
+    createBotTableQuery = """CREATE TABLE
                           IF NOT EXISTS bot_table
                           (prof_id TEXT UNIQUE,
                           ratings TEXT)
@@ -30,13 +34,41 @@ class Database:
                      bot_table(prof_id) VALUES(%s)
                      ON CONFLICT (prof_id) DO NOTHING
                      """
-    self.cursor.execute(createTableQuery)
+    self.cursor.execute(createBotTableQuery)
 
     for i in self.instructors:
       values = (i['ID'],)
       self.cursor.execute(insertRowQuery, values)
     self.connection.commit()
 
+  def createUsersTable(self):
+    createUsersTableQuery = """CREATE TABLE
+                          IF NOT EXISTS unique_users
+                          (year TEXT UNIQUE,
+                          ids TEXT)
+                       """
+    insertRowQuery = """INSERT INTO
+                     unique_users(year) VALUES(%s)
+                     ON CONFLICT (year) DO NOTHING
+                     """
+    self.cursor.execute(createUsersTableQuery)
+    self.cursor.execute(insertRowQuery, (self.currentYear,))
+    self.connection.commit()
+
+  def addUniqueUser(self, userId):
+    getUniqueUsers = """SELECT ids from unique_users WHERE year = '{}'"""
+    insertQuery = """UPDATE unique_users SET ids = '{}' WHERE year = '{}'"""
+
+    self.cursor.execute(getUniqueUsers.format(self.currentYear))
+
+    oldResult = self.cursor.fetchone()[0]
+    if oldResult is None:
+      self.cursor.execute(insertQuery.format(userId + ",", self.currentYear))
+    else:
+      self.cursor.execute(insertQuery.format(oldResult + userId + ",", self.currentYear))
+
+    self.connection.commit()
+    pass
 
   def rate(self, profId, userId, rating):
     insertQuery = """UPDATE bot_table SET ratings = '{}' WHERE prof_id = '{}'"""
