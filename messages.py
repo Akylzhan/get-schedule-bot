@@ -15,7 +15,6 @@ smallQueryMsg = [
   "your query is smol like your pp",
   "оничан, твой запрос слишком маленький",
   "Длина вашего запроса малюсенькая",
-  "I find your lack of characters in the query disturbing",
   "honey, this is not how it works: use longer queries",
   "hmm… your query doesn’t look good",
   "where’s the normal query, lebowski?"
@@ -31,5 +30,5 @@ emptyCourseListMsg = [
   "Если ты ждал какого-то знака, то вот он. Такого курса нет",
   "Этот курс как твои недостатки. Его невозможно найти",
   "Я не нашел такой курс. Не наказывайте, позязя",
-  "no course detected"
+  "course not detected"
 ]
