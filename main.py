@@ -61,9 +61,10 @@ def listOfProfs(update, context):
 
         if len(" ".join(context.args)) < 5:
             update.message.reply_text(
-                random.choice(messages.smallQueryMsg) +
-                "\nAnyway, here is a joke\n" + helpers.getJoke())
+                random.choice(messages.smallQueryMsg))
             return
+
+        print(context.args)
 
         profs = helpers.searchProf(context.args)
         if len(profs) == 0:
@@ -107,6 +108,8 @@ def listOfProfRatings(update, context):
         if len(profs) == 0:
             update.message.reply_text("Could not find this prof")
             return
+
+        print(context.args)
 
         keyboard = []
         for prof in profs:
@@ -153,8 +156,7 @@ def getCourseName(update, context):
 
         if searchResult == -1:
             update.message.reply_text(
-                random.choice(messages.emptyCourseListMsg) +
-                "\nAnyway, here is a joke\n" + helpers.getJoke())
+                random.choice(messages.emptyCourseListMsg))
             return
 
         keyboard = []
@@ -222,8 +224,7 @@ def sendSchedule(update, context):
         if formattedSchedule == -1:
             query.edit_message_text(
                 text=
-                "cannot find schedule or it was not uploaded :(\nAnyway, here is a joke\n"
-                + helpers.getJoke())
+                "cannot find schedule or it was not uploaded :(")
             context.bot.send_message(chat_id=384134675,
                                      text="ERROR in getSchedule")
             return
