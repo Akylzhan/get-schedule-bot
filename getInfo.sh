@@ -1,5 +1,5 @@
 #!/bin/bash
-curl -L --output data/courseList.gz 'https://registrar.nu.edu.kz/my-registrar/public-course-catalog/json' \
+curl -L --output data/courseList.gz 'https://registrar.nu.edu.kz/my-registrar/public-course-catalog/json' --resolve "registrar.nu.edu.kz:443:178.91.253.115" \
 -X 'POST' \
 -H 'Content-Type: application/x-www-form-urlencoded' \
 -H 'Accept: application/json, text/javascript, */*; q=0.01' \
@@ -17,7 +17,7 @@ gunzip -c data/courseList.gz > data/courseList.json
 rm data/courseList.gz
 
 
-curl -L --output data/instructors.gz 'https://registrar.nu.edu.kz/my-registrar/public-course-catalog/json' \
+curl -L --output data/instructors.gz 'https://registrar.nu.edu.kz/my-registrar/public-course-catalog/json' --resolve "registrar.nu.edu.kz:443:178.91.253.115" \
 -X 'POST' \
 -H 'Content-Type: application/x-www-form-urlencoded' \
 -H 'Accept: application/json, text/javascript, */*; q=0.01' \
@@ -36,7 +36,7 @@ gunzip -c data/instructors.gz > data/instructors.json
 rm data/instructors.gz
 
 
-curl -L --output data/semesters.gz 'https://registrar.nu.edu.kz/my-registrar/public-course-catalog/json' \
+curl -L --output data/semesters.gz 'https://registrar.nu.edu.kz/my-registrar/public-course-catalog/json' --resolve "registrar.nu.edu.kz:443:178.91.253.115" \
 -X 'POST' \
 -H 'Content-Type: application/x-www-form-urlencoded' \
 -H 'Accept: application/json, text/javascript, */*; q=0.01' \
@@ -55,7 +55,7 @@ gunzip -c data/semesters.gz > data/semesters.json
 rm data/semesters.gz
 
 
-curl -L --output data/schools.gz 'https://registrar.nu.edu.kz/my-registrar/public-course-catalog/json' \
+curl -L --output data/schools.gz 'https://registrar.nu.edu.kz/my-registrar/public-course-catalog/json' --resolve "registrar.nu.edu.kz:443:178.91.253.115" \
 -X 'POST' \
 -H 'Content-Type: application/x-www-form-urlencoded' \
 -H 'Accept: application/json, text/javascript, */*; q=0.01' \
@@ -74,7 +74,7 @@ gunzip -c data/schools.gz > data/schools.json
 rm data/schools.gz
 
 
-curl -L --output data/departments.gz 'https://registrar.nu.edu.kz/my-registrar/public-course-catalog/json' \
+curl -L --output data/departments.gz 'https://registrar.nu.edu.kz/my-registrar/public-course-catalog/json' --resolve "registrar.nu.edu.kz:443:178.91.253.115" \
 -X 'POST' \
 -H 'Content-Type: application/x-www-form-urlencoded' \
 -H 'Accept: application/json, text/javascript, */*; q=0.01' \

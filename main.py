@@ -56,9 +56,9 @@ def help_users(update, context):
 # just to write `rate name` and also `/rate name`
 # check line 88
 def listOfProfs(update, context):
-    try:
-        helpers.addUniqueUser(str(update.effective_message.chat_id))
+    helpers.addUniqueUser(str(update.effective_message.chat_id))
 
+    try:
         if len(" ".join(context.args)) < 5:
             update.message.reply_text(
                 random.choice(messages.smallQueryMsg))
@@ -97,9 +97,9 @@ def listOfProfs(update, context):
 
 @run_async
 def listOfProfRatings(update, context):
-    try:
-        helpers.addUniqueUser(str(update.effective_message.chat_id))
+    helpers.addUniqueUser(str(update.effective_message.chat_id))
 
+    try:
         if len(" ".join(context.args)) < 5:
             update.message.reply_text(random.choice(messages.smallQueryMsg))
             return
@@ -139,9 +139,9 @@ def listOfProfRatings(update, context):
 
 @run_async
 def getCourseName(update, context):
-    try:
-        helpers.addUniqueUser(str(update.effective_message.chat_id))
+    helpers.addUniqueUser(str(update.effective_message.chat_id))
 
+    try:
         print(update.message.text)
         data = update.message.text.lower()
         if len(data) < 3:
