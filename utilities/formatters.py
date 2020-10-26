@@ -108,11 +108,13 @@ def formatSchedule(courseId, termId):
 def requestSchedule(courseId, termId):
     try:
         courseSchedule = r.post(getScheduleUrl.format(courseId, termId),
-                                headers=getScheduleHeaders).text
+                                headers=getScheduleHeaders, timeout=20).text
         if len(courseSchedule) > 2:
             courseSchedule = eval(courseSchedule.replace('false', 'False'))
             return courseSchedule
         return -1
+    except requests.exceptions.ConnectTimeout:
+        return -2
     except:
         return -1
 

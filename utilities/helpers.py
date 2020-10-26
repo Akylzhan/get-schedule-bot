@@ -1,5 +1,4 @@
 import os
-import requests as req
 import time
 
 from .database import Database

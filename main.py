@@ -1,5 +1,4 @@
 import os
-import requests as req
 import logging
 import random
 
@@ -222,12 +221,13 @@ def sendSchedule(update, context):
 
         formattedSchedule = helpers.getSchedule(courseId, termId)
         if formattedSchedule == -1:
-            query.edit_message_text(
-                text=
-                "cannot find schedule or it was not uploaded :(")
+            query.edit_message_text(text=messages.noScheduleMsg)
             context.bot.send_message(chat_id=384134675,
                                      text="ERROR in getSchedule")
             return
+
+        elif formattedSchedule == -2:
+            query.edit_message_text(text=messages.registrarNotWorkingMsg)
 
         title = helpers.replaceMardownReservedChars(title)
 

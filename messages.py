@@ -28,3 +28,9 @@ emptyCourseListMsg = [
     "Этот курс как твои недостатки. Его невозможно найти",
     "Я не нашел такой курс. Не наказывайте, позязя", "course not detected"
 ]
+
+noScheduleMsg = "cannot find schedule or it was not uploaded"
+registrarNotWorkingMsg = """Registrar is not working :C or working veryyyy sloooooowly.
+Or maybe my creator is lazy to fix bugs.
+Try again later, please.
+By the way, you can check availability of NU websites in official NU Discord Server (https://discord.gg/SruKDaf)"""
