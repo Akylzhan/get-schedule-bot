@@ -4,7 +4,6 @@ import random
 
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from telegram.ext import CallbackQueryHandler, ConversationHandler
-from telegram.ext.dispatcher import run_async
 from telegram import ParseMode, InlineKeyboardButton, InlineKeyboardMarkup
 
 from utilities import helpers
@@ -94,7 +93,6 @@ def listOfProfs(update, context):
         print(' '.join(context.args) + " ERROR in listOfProfs")
 
 
-@run_async
 def listOfProfRatings(update, context):
     helpers.addUniqueUser(str(update.effective_message.chat_id))
 
@@ -136,7 +134,6 @@ def listOfProfRatings(update, context):
         print(' '.join(context.args) + " ERROR in listOfProfRatings")
 
 
-@run_async
 def getCourseName(update, context):
     helpers.addUniqueUser(str(update.effective_message.chat_id))
 
