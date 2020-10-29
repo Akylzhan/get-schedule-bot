@@ -13,6 +13,10 @@ curl -L --output data/courseList.gz 'https://registrar.nu.edu.kz/my-registrar/pu
 -H 'X-Requested-With: XMLHttpRequest' \
 --data 'method=getSearchData&searchParams%5BformSimple%5D=false&searchParams%5Blimit%5D=1000&searchParams%5Bpage%5D=1&searchParams%5Bstart%5D=0&searchParams%5BquickSearch%5D=&searchParams%5BsortField%5D=-1&searchParams%5BsortDescending%5D=-1&searchParams%5Bsemester%5D=541&searchParams%5Bschools%5D=&searchParams%5Bdepartments%5D=&searchParams%5Blevels%5D=&searchParams%5Bsubjects%5D=&searchParams%5Binstructors%5D=&searchParams%5Bbreadths%5D=&searchParams%5BabbrNum%5D=&searchParams%5Bcredit%5D='
 
+if [ $? -eq 7 ]; then
+  exit
+fi
+
 gunzip -c data/courseList.gz > data/courseList.json
 rm data/courseList.gz
 
@@ -92,3 +96,4 @@ curl -L --output data/departments.gz 'https://registrar.nu.edu.kz/my-registrar/p
 gunzip -c data/departments.gz > data/departments.json
 rm data/departments.gz
 
+git diff --name-only

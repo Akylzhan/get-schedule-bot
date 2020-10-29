@@ -2,18 +2,18 @@ from . import helpers
 
 import requests as req
 r = req.Session()
-getScheduleHeaders = {
-    'User-Agent':
-    'Mozilla/5.0 (X11; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0',
-    'Accept':
-    'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-    'Accept-Language': 'en-US,en;q=0.5',
-    'Accept-Encoding': 'gzip, deflate',
-    'Referer': 'https://registrar.nu.edu.kz/index.php?q=user/login',
-    'DNT': '1',
-    'Connection': 'close',
-    'Upgrade-Insecure-Requests': '1'
-}
+# getScheduleHeaders = {
+#     'User-Agent':
+#     'Mozilla/5.0 (X11; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0',
+#     'Accept':
+#     'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+#     'Accept-Language': 'en-US,en;q=0.5',
+#     'Accept-Encoding': 'gzip, deflate',
+#     'Referer': 'https://registrar.nu.edu.kz/index.php?q=user/login',
+#     'DNT': '1',
+#     'Connection': 'close',
+#     'Upgrade-Insecure-Requests': '1'
+# }
 getScheduleUrl = "http://178.91.253.115/my-registrar/public-course-catalog/json?method=getSchedule&courseId={}&termId={}"
 
 replaceMD = ['`', '(', ')', '+', '-', '.', '!']
@@ -39,6 +39,7 @@ def formatCourseInfo(course, termId):
 
 def formatFaculty(facultyList):
     faculty = []
+    profRatingSet = {}
 
     if '<br>' in facultyList:
         faculty = facultyList.split('<br>')
@@ -60,7 +61,7 @@ def formatFaculty(facultyList):
             profRating, countRatings = helpers.showRatingOfProf(profId)
             profRatingSet[profId] = [profRating, countRatings]
 
-        if rating > 0:
+        if float(profRating) > 0:
             formattedFaculty.append(
                 f'{profName} ({profRating}/5.0 - {countRatings} people rated)')
         else:
@@ -75,7 +76,6 @@ def formatSchedule(courseId, termId):
     schedule = requestSchedule(courseId, termId)
     if schedule == -1:
         return -1
-    profRatingSet = {}
 
     for course in schedule:
         cell = "\n"
@@ -107,13 +107,13 @@ def formatSchedule(courseId, termId):
 
 def requestSchedule(courseId, termId):
     try:
-        courseSchedule = r.post(getScheduleUrl.format(courseId, termId),
-                                headers=getScheduleHeaders, timeout=20).text
+        courseSchedule = r.post(getScheduleUrl.format(courseId, termId)).text
+
         if len(courseSchedule) > 2:
             courseSchedule = eval(courseSchedule.replace('false', 'False'))
             return courseSchedule
         return -1
-    except requests.exceptions.ConnectTimeout:
+    except req.exceptions.ConnectTimeout:
         return -2
     except:
         return -1
