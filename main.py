@@ -58,8 +58,7 @@ def listOfProfs(update, context):
 
     try:
         if len(" ".join(context.args)) < 5:
-            update.message.reply_text(
-                random.choice(messages.smallQueryMsg))
+            update.message.reply_text(random.choice(messages.smallQueryMsg))
             return
 
         print(context.args)
@@ -341,17 +340,18 @@ def error():
 
 
 def main():
-    updater = Updater(TOKEN, use_context=True, workers=16)
+    updater = Updater(TOKEN, use_context=True, workers=12)
     dp = updater.dispatcher
 
     dp.add_handler(CommandHandler("start", start))
-    dp.add_handler(CommandHandler("rate", listOfProfs))
-    dp.add_handler(CommandHandler("rating", listOfProfRatings))
+    dp.add_handler(CommandHandler("rate", listOfProfs, run_async=True))
+    dp.add_handler(CommandHandler("rating", listOfProfRatings, run_async=True))
     dp.add_handler(CommandHandler("help", help_users))
     dp.add_handler(
         MessageHandler(Filters.text & ~Filters.command, getCourseName))
     dp.add_handler(CallbackQueryHandler(sendCourseInfo, pattern="^i"))
-    dp.add_handler(CallbackQueryHandler(sendSchedule, pattern="^s"))
+    dp.add_handler(
+        CallbackQueryHandler(sendSchedule, pattern="^s", run_async=True))
     dp.add_handler(CallbackQueryHandler(sendRatingProf, pattern="^rating"))
     # ratebutton should come before rateProf button;
     # since regex engine finds ^rate
