@@ -17,10 +17,13 @@ if DEBUG:
 
 # manually change termId in getInfo.sh
 termId = int(eval(open("data/semesters.json", 'r').read())[0]['ID'])
+
 courseList = eval(open("data/courseList.json", 'r').read())['data']
 for course in courseList:
     for key in course:
         course[key] = " ".join(course[key].strip().split())
+
+courseList = sorted(courseList, key=lambda x: x['ABBR'])
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
