@@ -7,6 +7,8 @@ help_msg = """напиши название курса (аббревиатуру
 /help - моя забота о тебе \U0001F49E
 /rating ProfName ProfSurname - посмотреть рейтинг профа ProfName ProfSurname \U0001F47B
 /rate ProfName ProfSurname - оценить профа ProfName ProfSurname \U0001F929
+
+for feedback write @shadowsan12.
 """
 
 smallQueryMsg = [
