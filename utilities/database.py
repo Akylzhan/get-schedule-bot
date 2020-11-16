@@ -21,7 +21,6 @@ class Database:
         self.instructors = eval(instructors)
 
         self.createBotTable()
-        self.createUsersTable()
 
     def createBotTable(self):
         createBotTableQuery = """CREATE TABLE
@@ -39,39 +38,6 @@ class Database:
             values = (i['ID'], )
             self.cursor.execute(insertRowQuery, values)
         self.connection.commit()
-
-    def createUsersTable(self):
-        createUsersTableQuery = """CREATE TABLE
-                          IF NOT EXISTS unique_users
-                          (year TEXT UNIQUE,
-                          ids TEXT)
-                       """
-        insertRowQuery = """INSERT INTO
-                     unique_users(year) VALUES(%s)
-                     ON CONFLICT (year) DO NOTHING
-                     """
-        self.cursor.execute(createUsersTableQuery)
-        self.cursor.execute(insertRowQuery, (self.currentYear, ))
-        self.connection.commit()
-
-    def addUniqueUser(self, userId):
-        getUniqueUsers = """SELECT ids from unique_users WHERE year = '{}'"""
-        insertQuery = """UPDATE unique_users SET ids = '{}' WHERE year = '{}'"""
-
-        self.cursor.execute(getUniqueUsers.format(self.currentYear))
-
-        oldResult = self.cursor.fetchone()[0]
-        if oldResult is None:
-            self.cursor.execute(
-                insertQuery.format(userId + ",", self.currentYear))
-        else:
-            if userId not in oldResult:
-                self.cursor.execute(
-                    insertQuery.format(oldResult + userId + ",",
-                                       self.currentYear))
-
-        self.connection.commit()
-        pass
 
     def rate(self, profId, userId, rating):
         insertQuery = """UPDATE bot_table SET ratings = '{}' WHERE prof_id = '{}'"""

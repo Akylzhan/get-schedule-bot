@@ -34,7 +34,6 @@ logger = logging.getLogger(__name__)
 
 def start(update, context):
     try:
-        helpers.addUniqueUser(str(update.effective_message.chat_id))
         update.message.reply_text(messages.startMsg)
     except:
         if DEBUG:
@@ -44,7 +43,6 @@ def start(update, context):
 
 def help_users(update, context):
     try:
-        helpers.addUniqueUser(str(update.effective_message.chat_id))
         update.message.reply_text(messages.help_msg)
     except:
         if DEBUG:
@@ -57,7 +55,6 @@ def help_users(update, context):
 # just to write `rate name` and also `/rate name`
 # check line 88
 def listOfProfs(update, context):
-    helpers.addUniqueUser(str(update.effective_message.chat_id))
 
     try:
         if len(" ".join(context.args)) < 5:
@@ -96,7 +93,6 @@ def listOfProfs(update, context):
 
 
 def listOfProfRatings(update, context):
-    helpers.addUniqueUser(str(update.effective_message.chat_id))
 
     try:
         if len(" ".join(context.args)) < 5:
@@ -137,7 +133,6 @@ def listOfProfRatings(update, context):
 
 
 def getCourseName(update, context):
-    helpers.addUniqueUser(str(update.effective_message.chat_id))
 
     try:
         print(update.message.text)

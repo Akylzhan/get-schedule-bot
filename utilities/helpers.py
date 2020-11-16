@@ -22,10 +22,6 @@ def showRatingOfProf(profId):
     return db.calculateRating(profId)
 
 
-def addUniqueUser(userId):
-    db.addUniqueUser(userId)
-
-
 def searchProf(args):
     profName = args[0].lower()
     profSurname = args[0].lower()
