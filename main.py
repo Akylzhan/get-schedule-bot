@@ -43,7 +43,7 @@ def start(update, context):
 
 def help_users(update, context):
     try:
-        update.message.reply_text(messages.help_msg)
+        update.message.reply_text(messages.help_msg,parse_mode=ParseMode.MARKDOWN_V2)
     except:
         if DEBUG:
             raise

@@ -96,4 +96,25 @@ curl -L --output data/departments.gz 'https://registrar.nu.edu.kz/my-registrar/p
 gunzip -c data/departments.gz > data/departments.json
 rm data/departments.gz
 
-git diff --name-only
+
+# if the last commit contains course list updates,
+# we can squash new updates to it
+
+gd=$(git diff --name-only)
+
+if [[ ${#gd} -eq 0 ]]
+then
+  exit
+fi
+
+echo $gd
+read -p "Update course list (Y/N)? " -n 1 -r
+echo
+
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+  git add .
+  git commit -m "u"
+  git rebase -i HEAD~2
+  git push --force origin master
+fi

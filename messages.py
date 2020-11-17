@@ -1,14 +1,25 @@
-startMsg = "Hello! Send me course name (eg. CSCI 152 or public speaking) and I will send you schedule of this course"
+startMsg = """Hello! Send me course name (eg. CSCI 152 or public speaking) and I will send you schedule of this course
+use /help ples"""
 
-help_msg = """напиши название курса (аббревиатуру или полное название) и я отправлю тебе расписание.
+help_msg = """напиши название курса \(аббревиатуру или название, не обяз полное\) и я отправлю тебе расписание\.
+_Examples_:
+Если написать боту csci, то он скинет лист CSCI курсов
+Если написать public speaking, то скинет подходящие варианты
 
 оничан, не пугайся, это всего лишь несколько моих команд:
-/start - запустить меня \U0001F97A
-/help - моя забота о тебе \U0001F49E
-/rating ProfName ProfSurname - посмотреть рейтинг профа ProfName ProfSurname \U0001F47B
-/rate ProfName ProfSurname - оценить профа ProfName ProfSurname \U0001F929
+\-\- /start \- запустить меня \U0001F97A
+\-\- /help \- моя забота о тебе \U0001F49E
 
-for feedback write @shadowsan12.
+\-\- /rating ProfName ProfSurname \- посмотреть рейтинг профа ProfName ProfSurname \U0001F47B
+*Не обяз писать полное имя* профа, можно просто имя или фамилия
+_Examples_:
+_/rating Durvudkhan_
+_/rating Aigerim_ \(don't do that, we had many Aigerim profs, therefore list will be loooooong, like my pp\)
+
+\-\- /rate ProfName ProfSurname \- оценить профа ProfName ProfSurname \U0001F929
+**Examples: same as /rating**
+
+for feedback write @shadowsan12\.
 """
 
 smallQueryMsg = [
