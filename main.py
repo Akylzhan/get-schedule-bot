@@ -43,17 +43,14 @@ def start(update, context):
 
 def help_users(update, context):
     try:
-        update.message.reply_text(messages.help_msg,parse_mode=ParseMode.MARKDOWN_V2)
+        update.message.reply_text(messages.help_msg,
+                                  parse_mode=ParseMode.MARKDOWN_V2)
     except:
         if DEBUG:
             raise
         print("ERROR_help")
 
 
-# TODO
-# change this to call external function to do this entirely
-# just to write `rate name` and also `/rate name`
-# check line 88
 def listOfProfs(update, context):
 
     try:
@@ -133,7 +130,6 @@ def listOfProfRatings(update, context):
 
 
 def getCourseName(update, context):
-
     try:
         print(update.message.text)
         data = update.message.text.lower()
@@ -177,7 +173,6 @@ def getCourseName(update, context):
     except:
         if DEBUG:
             raise
-        context.bot.send_message(chat_id=384134675, text=update.message.text)
 
 
 def sendCourseInfo(update, context):
@@ -198,9 +193,6 @@ def sendCourseInfo(update, context):
     except:
         if DEBUG:
             raise
-        context.bot.send_message(chat_id=384134675,
-                                 text=courseList[int(query.data[1:])]['ABBR'] +
-                                 " ERROR in sendCourseInfo")
 
 
 def sendSchedule(update, context):
@@ -216,8 +208,6 @@ def sendSchedule(update, context):
         formattedSchedule = helpers.getSchedule(courseId, termId)
         if formattedSchedule == -1:
             query.edit_message_text(text=messages.noScheduleMsg)
-            context.bot.send_message(chat_id=384134675,
-                                     text="ERROR in getSchedule")
             return
 
         elif formattedSchedule == -2:
@@ -255,9 +245,6 @@ def sendSchedule(update, context):
     except:
         if DEBUG:
             raise
-        context.bot.send_message(chat_id=384134675,
-                                 text=courseList[int(query.data[1:])]['ABBR'] +
-                                 " ERROR in sendSchedule")
 
 
 def sendRatingProf(update, context):
