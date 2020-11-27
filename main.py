@@ -131,11 +131,25 @@ def listOfProfRatings(update, context):
 
 def getCourseName(update, context):
     try:
+        if "/rate@nu_course_schedule_bot" in update.message.text:
+            update.message.reply_text("Nah dude, use 'rate' in DM")
+            return
+
+        if "/rating@nu_course_schedule_bot" in update.message.text:
+            update.message.reply_text("Nah dude, use 'rating' in DM")
+            return
+
         print(update.message.text)
+
         data = update.message.text.lower()
+        data = data.replace('/course', '') \
+                   .replace('@nu_course_schedule_bot', '') \
+                   .replace('@checkschedulebotbot', '')
+
         if len(data) < 3:
             update.message.reply_text(random.choice(messages.smallQueryMsg))
             return
+
         if data.split()[0] == 'rate':
             update.message.reply_text(
                 "Usage: \n/rate ProfName ProfSurname\nor\n/rate ProfName")
@@ -332,8 +346,11 @@ def main():
     dp.add_handler(CommandHandler("rate", listOfProfs, run_async=True))
     dp.add_handler(CommandHandler("rating", listOfProfRatings, run_async=True))
     dp.add_handler(CommandHandler("help", help_users))
+    dp.add_handler(CommandHandler("course", getCourseName))
+
     dp.add_handler(
         MessageHandler(Filters.text & ~Filters.command, getCourseName))
+
     dp.add_handler(CallbackQueryHandler(sendCourseInfo, pattern="^i"))
     dp.add_handler(
         CallbackQueryHandler(sendSchedule, pattern="^s", run_async=True))

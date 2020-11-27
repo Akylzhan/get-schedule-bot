@@ -3,21 +3,32 @@ use /help ples"""
 
 help_msg = """напиши название курса \(аббревиатуру или название, не обяз полное\) и я отправлю тебе расписание\.
 _Examples_:
-Если написать боту csci, то он скинет лист CSCI курсов
+Если написать боту csci, то он скинет лист всех CSCI курсов
 Если написать public speaking, то скинет подходящие варианты
 
 оничан, не пугайся, это всего лишь несколько моих команд:
-\-\- /start \- запустить меня \U0001F97A
-\-\- /help \- моя забота о тебе \U0001F49E
+1\. /start \- запустить меня \U0001F97A
 
-\-\- /rating ProfName ProfSurname \- посмотреть рейтинг профа ProfName ProfSurname \U0001F47B
+2\. /help \- моя забота о тебе \U0001F49E
+
+3\. /rating ProfName ProfSurname \- посмотреть рейтинг профа ProfName ProfSurname \U0001F47B
 *Не обяз писать полное имя* профа, можно просто имя или фамилия
 _Examples_:
 _/rating Durvudkhan_
-_/rating Aigerim_ \(don't do that, we had many Aigerim profs, therefore list will be loooooong, like my pp\)
+_/rating Aigerim_ \(don't do that, we had many Aigerim profs, TAs, therefore list will be loooooong, like my pp\)
 
-\-\- /rate ProfName ProfSurname \- оценить профа ProfName ProfSurname \U0001F929
+4\. /rate ProfName ProfSurname \- оценить профа ProfName ProfSurname \U0001F929
 **Examples: same as /rating**
+
+5\. I can also reply in group\. The in group commands are same:
+/start@nu\_course\_schedule\_bot
+/help@nu\_course\_schedule\_bot
+/rating@nu\_course\_schedule\_bot
+/rate@nu\_course\_schedule\_bot
+
+But to *search course in group* you should use
+/course@nu\_course\_schedule\_bot
+Otherwise I will not answer
 
 for feedback write @shadowsan12\.
 """
