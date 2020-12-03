@@ -42,18 +42,28 @@ smallQueryMsg = [
 ]
 
 emptyCourseListMsg = [
-    "Такого курса нет в курс листе, либо я ошибка природы :(",
-    "Я не панимат тебя, кажись такого курса нет :(",
+    "Такого курса нет в курс листе, либо я ошибка природы :\(",
+    "Я не панимат тебя, кажись такого курса нет :\(",
     "Я не смог найти такой курс, пласти",
-    "Прости меня сенпай, я не смог найти такой курс :(",
+    "Прости меня сенпай, я не смог найти такой курс :\(",
     "Я кажется слепой, потому что не вижу такого курса",
     "Я не нашёл курс, но хотя бы не потерял тебя",
-    "Если ты ждал какого-то знака, то вот он. Такого курса нет",
-    "Этот курс как твои недостатки. Его невозможно найти",
-    "Я не нашел такой курс. Не наказывайте, позязя", "course not detected"
+    "Если ты ждал какого\-то знака, то вот он\. Такого курса нет",
+    "Этот курс как твои недостатки\. Его невозможно найти",
+    "Я не нашел такой курс\. Не наказывайте, позязя",
+    "course not detected"
 ]
 
 noScheduleMsg = "cannot find schedule or it was not uploaded"
+
+suggestPDFMsg = """
+Some courses are absent in my database
+\(I am taking courses from public course catalog\)
+But they are present in PDF:
+[Undergraduate](http://registrar.nu.edu.kz/registrar_downloads/json?method=printDocument&name=school_schedule_by_term&termid={}&academiclevel=1)
+[Graduate](http://registrar.nu.edu.kz/registrar_downloads/json?method=printDocument&name=school_schedule_by_term&termid={}&academiclevel=2)
+[PhD](http://registrar.nu.edu.kz/registrar_downloads/json?method=printDocument&name=school_schedule_by_term&termid={}&academiclevel=3)
+"""
 registrarNotWorkingMsg = """Registrar is not working :C or working veryyyy sloooooowly.
 Or maybe my creator is lazy to fix bugs.
 Try again later, please.
