@@ -159,7 +159,9 @@ def getCourseName(update, context):
 
         if searchResult == -1:
             update.message.reply_text(
-                random.choice(messages.emptyCourseListMsg))
+                    random.choice(messages.emptyCourseListMsg) +
+                    messages.suggestPDFMsg.format(termId, termId, termId),
+                parse_mode=ParseMode.MARKDOWN_V2)
             return
 
         keyboard = []
