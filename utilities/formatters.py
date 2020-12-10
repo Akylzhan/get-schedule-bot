@@ -78,8 +78,9 @@ def formatSchedule(courseId, termId):
         return -1
 
     for course in schedule:
+        st = course['ST'].replace('R', ' Recitation').replace('T', ' Tutorial')
         cell = "\n"
-        cell += f"Type: *{course['ST']}*\n"
+        cell += f"Type: *{st}*\n"
         cell += f"Days: {course['DAYS']}\n"
         cell += f"Times: {course['TIMES']}\n"
         cell += f"Profs: *{formatFaculty(course['FACULTY'])}*\n"
