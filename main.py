@@ -319,7 +319,7 @@ def rateProf(update, context):
 
 def ratebutton(update, context):
     query = update.callback_query
-
+    query.answer()
     userId = str(update.effective_message.chat_id)
 
     data = query.data[10:].split(';')
